@@ -29,6 +29,8 @@ defmodule Spidey do
     |> @content.parse_links()
   end
 
+  def scan_async([]), do: []
+
   def scan_async(urls) when is_list(urls) do
     urls
     |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
