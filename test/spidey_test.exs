@@ -6,33 +6,23 @@ defmodule SpideyTest do
   test "gets the urls of a website" do
     setup_content_stub(1)
 
-    results = Spidey.crawl("some.url")
+    results = Spidey.scan("some.url")
 
     assert ["https://jgarcia.blog", "https://jgarcia.site"] == results
-  end
-
-  test "gets the urls of multiple websites" do
-    setup_content_stub(2)
-
-    results = Spidey.crawl(["some.url", "another.url"])
-
-    assert [
-             ["https://jgarcia.blog", "https://jgarcia.site"],
-             ["https://jgarcia.blog", "https://jgarcia.site"]
-           ] == results
   end
 
   test "filter urls whose domain doesn't match the seed's" do
     seed = "https://monzo.com/"
 
-    fetched_urls = [
+    scanned_urls = [
       "https://facebook.com/some-profile",
       "google.com",
       "http://monzo.com/careers",
+      "http://community.monzo.com/home",
       "http://jgarcia.blog"
     ]
 
-    filtered_urls = Spidey.filter_non_domain_urls(seed, fetched_urls)
+    filtered_urls = Spidey.filter_non_domain_urls(scanned_urls, seed)
 
     assert ["http://monzo.com/careers"] == filtered_urls
   end
