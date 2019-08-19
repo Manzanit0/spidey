@@ -16,6 +16,7 @@ defmodule SpideyTest do
     <html>
       <body>
         <div><a href="https://depth.com/2"></a></div>
+        <div><a href="https://depth.com/1"></a></div>
       </body>
     </html>
     """
@@ -24,6 +25,8 @@ defmodule SpideyTest do
     <html>
       <body>
         <a href="https://depth.com/3"></a>
+        <div><a href="https://depth.com/1"></a></div>
+        <div><a href="https://depth.com/2"></a></div>
         <a href="https://notvalid.depth.com/3"></a>
       </body>
     </html>

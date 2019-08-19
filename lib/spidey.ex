@@ -10,15 +10,16 @@ defmodule Spidey do
   end
 
   def crawl(%CrawlResult{scanned: scanned, pending: []}) do
-    scanned
+    Enum.uniq(scanned)
   end
 
   def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed} = cr) do
     results =
       pending
       |> scan_async()
-      |> filter_already_scanned_urls(scanned)
+      |> filter_already_scanned_urls(scanned ++ pending)
       |> filter_non_domain_urls(seed)
+      |> Enum.uniq()
 
     crawl(%CrawlResult{cr | pending: results, scanned: scanned ++ pending})
   end
