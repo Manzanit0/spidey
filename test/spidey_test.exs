@@ -22,6 +22,21 @@ defmodule SpideyTest do
            ] == results
   end
 
+  test "filter urls whose domain doesn't match the seed's" do
+    seed = "https://monzo.com/"
+
+    fetched_urls = [
+      "https://facebook.com/some-profile",
+      "google.com",
+      "http://monzo.com/careers",
+      "http://jgarcia.blog"
+    ]
+
+    filtered_urls = Spidey.filter_non_domain_urls(seed, fetched_urls)
+
+    assert ["http://monzo.com/careers"] == filtered_urls
+  end
+
   def setup_content_stub(executions) do
     html = """
     <html>
