@@ -3,12 +3,10 @@ defmodule SpideyTest do
 
   import Mox
 
-  test "gets the urls of a website" do
+  test "gets the urls of a stubbed website" do
     setup_content_stub(1)
 
-    results = Spidey.crawl("some.url")
-
-    assert ["https://jgarcia.blog", "https://jgarcia.site"] == results
+    assert ["https://jgarcia.blog", "https://jgarcia.site"] == Spidey.crawl("some.url")
   end
 
   test "gets the urls of multiple websites" do
