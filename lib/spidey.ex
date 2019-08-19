@@ -1,7 +1,9 @@
 defmodule Spidey do
+  @content Application.get_env(:spidey, :content)
+
   def crawl(url) do
     url
-    |> Content.get!()
-    |> Content.parse_links()
+    |> @content.get!()
+    |> @content.parse_links()
   end
 end

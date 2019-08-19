@@ -1,4 +1,6 @@
 defmodule Content do
+  @behaviour ContentBehaviour
+
   def parse_links(html) do
     html
     |> Floki.find("* a")
@@ -10,4 +12,9 @@ defmodule Content do
     |> HTTPoison.get!()
     |> Map.get(:body)
   end
+end
+
+defmodule ContentBehaviour do
+  @callback parse_links(String.t()) :: [String.t()]
+  @callback get!(String.t()) :: String.t()
 end
