@@ -7,8 +7,13 @@ defmodule Spidey do
     url
     |> HTTPoison.get!()
     |> Map.get(:body)
+    |> parse_links()
+    # |> Enum.map(fn url -> HTTPoison.get!(url) end)
+  end
+
+  def parse_links(html) do
+    html
     |> Floki.find("* a")
     |> Floki.attribute("href")
-    # |> Enum.map(fn url -> HTTPoison.get!(url) end)
   end
 end
