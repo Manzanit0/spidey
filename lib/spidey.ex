@@ -16,9 +16,7 @@ defmodule Spidey do
   def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed}) do
     results =
       pending
-      |> Enum.map(&scan_async/1)
-      |> Enum.map(&Task.await/1)
-      |> List.flatten()
+      |> scan_async()
       |> filter_already_scanned_urls(scanned)
       |> filter_non_domain_urls(seed)
 
@@ -31,8 +29,11 @@ defmodule Spidey do
     |> @content.parse_links()
   end
 
-  def scan_async(url) do
-    Task.async(fn -> scan(url) end)
+  def scan_async(urls) when is_list(urls) do
+    urls
+    |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
+    |> Enum.map(&Task.await/1)
+    |> List.flatten()
   end
 
   def filter_non_domain_urls(urls, seed) do
