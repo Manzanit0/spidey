@@ -5,8 +5,7 @@ defmodule Spidey do
 
   def crawl(url) do
     url
-    |> HTTPoison.get!()
-    |> Map.get(:body)
+    |> fetch_website_content()
     |> parse_links()
     # |> Enum.map(fn url -> HTTPoison.get!(url) end)
   end
@@ -15,5 +14,11 @@ defmodule Spidey do
     html
     |> Floki.find("* a")
     |> Floki.attribute("href")
+  end
+
+  def fetch_website_content(url) do
+    url
+    |> HTTPoison.get!()
+    |> Map.get(:body)
   end
 end
