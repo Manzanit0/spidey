@@ -44,7 +44,7 @@ defmodule Spidey do
     Enum.filter(urls, fn url -> URI.parse(url).host == seed_host end)
   end
 
-  defp filter_already_scanned_urls(urls, scanned) do
+  def filter_already_scanned_urls(urls, scanned) do
     Enum.filter(urls, fn x -> !Enum.member?(scanned, x) end)
   end
 end

@@ -76,6 +76,22 @@ defmodule SpideyTest do
     assert ["http://monzo.com/careers"] == filtered_urls
   end
 
+  test "filter already scanned urls" do
+    urls = [
+      "http://monzo.com/careers",
+      "http://monzo.com/blog"
+    ]
+
+    scanned_urls = [
+      "http://monzo.com/home",
+      "http://monzo.com/blog",
+    ]
+
+    filtered_urls = Spidey.filter_already_scanned_urls(urls, scanned_urls)
+
+    assert ["http://monzo.com/careers"] == filtered_urls
+  end
+
   def setup_content_stub(executions) do
     html = """
     <html>
