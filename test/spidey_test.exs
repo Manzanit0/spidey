@@ -3,6 +3,52 @@ defmodule SpideyTest do
 
   import Mox
 
+  test "crawls a site with depth 3" do
+    html1 = """
+    <html>
+      <body>
+        <div><a href="https://depth.com/1"></a></div>
+      </body>
+    </html>
+    """
+
+    html2 = """
+    <html>
+      <body>
+        <div><a href="https://depth.com/2"></a></div>
+      </body>
+    </html>
+    """
+
+    html3 = """
+    <html>
+      <body>
+        <a href="https://depth.com/3"></a>
+        <a href="https://notvalid.depth.com/3"></a>
+      </body>
+    </html>
+    """
+
+    Application.get_env(:spidey, :content)
+    |> expect(:get!, fn "https://depth.com" -> html1 end)
+    |> expect(:get!, fn "https://depth.com/1" -> html2 end)
+    |> expect(:get!, fn "https://depth.com/2" -> html3 end)
+    |> expect(:get!, fn "https://depth.com/3" -> html1 end)
+    |> expect(:parse_links, 4, &Content.parse_links/1)
+
+    results =
+      "https://depth.com"
+      |> Spidey.new()
+      |> Spidey.crawl()
+
+    assert [
+             "https://depth.com",
+             "https://depth.com/1",
+             "https://depth.com/2",
+             "https://depth.com/3"
+           ] == results
+  end
+
   test "gets the urls of a website" do
     setup_content_stub(1)
 
