@@ -13,14 +13,14 @@ defmodule Spidey do
     scanned
   end
 
-  def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed}) do
+  def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed} = cr) do
     results =
       pending
       |> scan_async()
       |> filter_already_scanned_urls(scanned)
       |> filter_non_domain_urls(seed)
 
-    crawl(%CrawlResult{seed: seed, pending: results, scanned: scanned ++ pending})
+    crawl(%CrawlResult{cr | pending: results, scanned: scanned ++ pending})
   end
 
   def scan(url) do
