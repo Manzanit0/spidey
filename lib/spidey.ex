@@ -1,14 +1,47 @@
+defmodule CrawlResult do
+  defstruct [:scanned, :pending, :seed]
+end
+
 defmodule Spidey do
-  def crawl(urls) when is_list(urls) do
-    Enum.each(urls, &crawl/1)
+  @content Application.get_env(:spidey, :content)
+
+  def new(url) do
+    %CrawlResult{seed: url, scanned: [], pending: [url]}
   end
 
-  def crawl(url) do
-    url
-    |> HTTPoison.get!()
-    |> Map.get(:body)
-    |> Floki.find("* a")
-    |> Floki.attribute("href")
-    # |> Enum.map(fn url -> HTTPoison.get!(url) end)
+  def crawl(%CrawlResult{scanned: scanned, pending: []}) do
+    Enum.uniq(scanned)
+  end
+
+  def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed} = cr) do
+    results =
+      pending
+      |> scan_async()
+      |> Filters.process_relative_urls(seed)
+      |> Filters.already_scanned_urls(scanned ++ pending)
+      |> Filters.non_domain_urls(seed)
+      |> Enum.uniq()
+
+    crawl(%CrawlResult{cr | pending: results, scanned: scanned ++ pending})
+  end
+
+  def scan(url) when is_binary(url) do
+    try do
+      url
+      |> @content.get!()
+      |> @content.parse_links()
+    rescue
+      HTTPoison.Error -> [] # Timeout, wrong url, etc.
+      CaseClauseError -> [] # non-html format
+    end
+  end
+
+  def scan_async([]), do: []
+
+  def scan_async(urls) when is_list(urls) do
+    urls
+    |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
+    |> Enum.map(fn t -> Task.await(t, 15_000) end)
+    |> List.flatten()
   end
 end

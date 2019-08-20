@@ -18,7 +18,8 @@ defmodule Spidey.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.5"},
-      {:floki, "~> 0.21.0"}
+      {:floki, "~> 0.21.0"},
+      {:mox, "~> 0.5", only: :test}
     ]
   end
 end
