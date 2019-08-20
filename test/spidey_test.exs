@@ -65,82 +65,6 @@ defmodule SpideyTest do
   end
 
   test "gets the urls of a website" do
-    setup_content_stub(1)
-
-    results = Spidey.scan("some.url")
-
-    assert ["https://jgarcia.blog", "https://jgarcia.site"] == results
-  end
-
-  test "filter urls whose domain doesn't match the seed's" do
-    seed = "https://monzo.com/"
-
-    scanned_urls = [
-      "https://facebook.com/some-profile",
-      "google.com",
-      "http://monzo.com/careers",
-      "http://community.monzo.com/home",
-      "http://jgarcia.blog"
-    ]
-
-    filtered_urls = Spidey.filter_non_domain_urls(scanned_urls, seed)
-
-    assert ["http://monzo.com/careers"] == filtered_urls
-  end
-
-  test "filter already scanned urls" do
-    urls = [
-      "http://monzo.com/careers",
-      "http://monzo.com/blog"
-    ]
-
-    scanned_urls = [
-      "http://monzo.com/home",
-      "http://monzo.com/blog"
-    ]
-
-    filtered_urls = Spidey.filter_already_scanned_urls(urls, scanned_urls)
-
-    assert ["http://monzo.com/careers"] == filtered_urls
-  end
-
-  test "adds the host to relative urls using the seed's http scheme" do
-    urls = [
-      "https://mysomething.url",
-      "/legal/1",
-      "/home",
-      "/services"
-    ]
-
-    processed_urls = Spidey.process_relative_urls(urls, "http://jgarcia.com")
-
-    assert [
-             "https://mysomething.url/",
-             "http://jgarcia.com/legal/1",
-             "http://jgarcia.com/home",
-             "http://jgarcia.com/services"
-           ] == processed_urls
-  end
-
-  test "adds the host to relative urls using the seed's https scheme" do
-    urls = [
-      "https://mysomething.url",
-      "/legal/1",
-      "/home",
-      "/services"
-    ]
-
-    processed_urls = Spidey.process_relative_urls(urls, "https://jgarcia.com")
-
-    assert [
-             "https://mysomething.url/",
-             "https://jgarcia.com/legal/1",
-             "https://jgarcia.com/home",
-             "https://jgarcia.com/services"
-           ] == processed_urls
-  end
-
-  def setup_content_stub(executions) do
     html = """
     <html>
       <body>
@@ -151,7 +75,11 @@ defmodule SpideyTest do
     """
 
     Application.get_env(:spidey, :content)
-    |> expect(:get!, executions, fn _ -> html end)
-    |> expect(:parse_links, executions, &Content.parse_links/1)
+    |> expect(:get!, 1, fn _ -> html end)
+    |> expect(:parse_links, 1, &Content.parse_links/1)
+
+    results = Spidey.scan("some.url")
+
+    assert ["https://jgarcia.blog", "https://jgarcia.site"] == results
   end
 end
