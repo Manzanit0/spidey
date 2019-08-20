@@ -7,7 +7,8 @@ defmodule Spidey.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env)
     ]
   end
 
@@ -22,4 +23,7 @@ defmodule Spidey.MixProject do
       {:mox, "~> 0.5", only: :test}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["test/support", "lib"]
+  defp elixirc_paths(_), do: ["lib"]
 end
