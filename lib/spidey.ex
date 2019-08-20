@@ -17,6 +17,7 @@ defmodule Spidey do
     results =
       pending
       |> scan_async()
+      |> process_relative_urls(seed)
       |> filter_already_scanned_urls(scanned ++ pending)
       |> filter_non_domain_urls(seed)
       |> Enum.uniq()
@@ -47,4 +48,31 @@ defmodule Spidey do
   def filter_already_scanned_urls(urls, scanned) do
     Enum.filter(urls, fn x -> !Enum.member?(scanned, x) end)
   end
+
+  def process_relative_urls(urls, seed) do
+    Enum.map(urls, fn url -> to_absolute_url(url, seed) end)
+  end
+
+  defp to_absolute_url(url, seed) do
+    with %URI{scheme: s, host: h, path: p} <- URI.parse(url),
+         scheme <- scheme(s),
+         host <- host(h, seed),
+         path <- path(p)
+    do
+      scheme <> host <> path
+    else
+      :error -> ""
+    end
+  end
+
+  defp scheme("https"), do: "https://"
+  defp scheme(_other), do: "http://"
+
+  defp host(h, _) when h != nil and h != "", do: h
+  defp host(_, seed) when seed != nil and seed != "", do: seed
+  defp host(_, _), do: {:error, "nil or empty host"}
+
+  defp path(nil), do: "/"
+  defp path(""), do: "/"
+  defp path(p), do: p
 end

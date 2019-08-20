@@ -84,12 +84,30 @@ defmodule SpideyTest do
 
     scanned_urls = [
       "http://monzo.com/home",
-      "http://monzo.com/blog",
+      "http://monzo.com/blog"
     ]
 
     filtered_urls = Spidey.filter_already_scanned_urls(urls, scanned_urls)
 
     assert ["http://monzo.com/careers"] == filtered_urls
+  end
+
+  test "adds the host to relative urls" do
+    urls = [
+      "https://mysomething.url",
+      "/legal/1",
+      "/home",
+      "/services"
+    ]
+
+    processed_urls = Spidey.process_relative_urls(urls, "jgarcia.com")
+
+    assert [
+             "https://mysomething.url/",
+             "http://jgarcia.com/legal/1",
+             "http://jgarcia.com/home",
+             "http://jgarcia.com/services"
+           ] == processed_urls
   end
 
   def setup_content_stub(executions) do
