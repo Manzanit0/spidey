@@ -55,8 +55,9 @@ defmodule Spidey do
 
   defp to_absolute_url(url, seed) do
     with %URI{scheme: s, host: h, path: p} <- URI.parse(url),
-         scheme <- scheme(s),
-         host <- host(h, seed),
+         %URI{scheme: seed_scheme, host: seed_host} <- URI.parse(seed),
+         scheme <- scheme(s, seed_scheme),
+         host <- host(h, seed_host),
          path <- path(p)
     do
       scheme <> host <> path
@@ -65,11 +66,12 @@ defmodule Spidey do
     end
   end
 
-  defp scheme("https"), do: "https://"
-  defp scheme(_other), do: "http://"
+  defp scheme("https", _), do: "https://"
+  defp scheme(_, s) when s != nil and s != "", do: s <> "://"
+  defp scheme(_, _), do: "http://"
 
   defp host(h, _) when h != nil and h != "", do: h
-  defp host(_, seed) when seed != nil and seed != "", do: seed
+  defp host(_, s) when s != nil and s != "", do: s
   defp host(_, _), do: {:error, "nil or empty host"}
 
   defp path(nil), do: "/"

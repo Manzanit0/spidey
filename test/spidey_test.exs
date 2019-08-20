@@ -92,7 +92,7 @@ defmodule SpideyTest do
     assert ["http://monzo.com/careers"] == filtered_urls
   end
 
-  test "adds the host to relative urls" do
+  test "adds the host to relative urls using the seed's http scheme" do
     urls = [
       "https://mysomething.url",
       "/legal/1",
@@ -100,13 +100,31 @@ defmodule SpideyTest do
       "/services"
     ]
 
-    processed_urls = Spidey.process_relative_urls(urls, "jgarcia.com")
+    processed_urls = Spidey.process_relative_urls(urls, "http://jgarcia.com")
 
     assert [
              "https://mysomething.url/",
              "http://jgarcia.com/legal/1",
              "http://jgarcia.com/home",
              "http://jgarcia.com/services"
+           ] == processed_urls
+  end
+
+  test "adds the host to relative urls using the seed's https scheme" do
+    urls = [
+      "https://mysomething.url",
+      "/legal/1",
+      "/home",
+      "/services"
+    ]
+
+    processed_urls = Spidey.process_relative_urls(urls, "https://jgarcia.com")
+
+    assert [
+             "https://mysomething.url/",
+             "https://jgarcia.com/legal/1",
+             "https://jgarcia.com/home",
+             "https://jgarcia.com/services"
            ] == processed_urls
   end
 
