@@ -26,9 +26,14 @@ defmodule Spidey do
   end
 
   def scan(url) when is_binary(url) do
-    url
-    |> @content.get!()
-    |> @content.parse_links()
+    try do
+      url
+      |> @content.get!()
+      |> @content.parse_links()
+    rescue
+      HTTPoison.Error -> [] # Timeout, wrong url, etc.
+      CaseClauseError -> [] # non-html format
+    end
   end
 
   def scan_async([]), do: []

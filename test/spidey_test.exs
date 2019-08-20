@@ -3,6 +3,18 @@ defmodule SpideyTest do
 
   import Mox
 
+  test "doesn't get urls upon invalid url" do
+    Application.get_env(:spidey, :content)
+    |> expect(:get!, fn _ -> raise HTTPoison.Error end)
+
+    results =
+      "wrong-url.com"
+      |> Spidey.new()
+      |> Spidey.crawl()
+
+    assert ["wrong-url.com"] == results
+  end
+
   test "crawls a site with depth 3" do
     html1 = """
     <html>
