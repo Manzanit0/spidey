@@ -1,3 +1,3 @@
 use Mix.Config
 
-config :spidey, content: Content
+config :spidey, content: Core.Content

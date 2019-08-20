@@ -13,10 +13,15 @@ Once you have Elixir installed, to set up the application run:
 git clone https://github.com/Manzanit0/spidey
 cd spidey
 mix deps.get
+mix escript.build
 ```
 
-To crawl websites, run `mix crawl`:
+To crawl websites, run the escript `./spidey`:
 
 ```
-mix crawl "https://manzanit0.github.io/"
+./spidey --site https://manzanit0.github.io/
 ```
+
+[Escripts](https://hexdocs.pm/mix/master/Mix.Tasks.Escript.Build.html)
+will run in any system which has Erlang/OTP installed, regardless
+if they have Elixir or not.
