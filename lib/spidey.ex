@@ -36,7 +36,7 @@ defmodule Spidey do
   def scan_async(urls) when is_list(urls) do
     urls
     |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
-    |> Enum.map(&Task.await/1)
+    |> Enum.map(fn t -> Task.await(t, 15_000) end)
     |> List.flatten()
   end
 
