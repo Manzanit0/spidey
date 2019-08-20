@@ -1,6 +1,9 @@
 defmodule SpideyTest do
   use ExUnit.Case, async: true
 
+  alias Core.Spidey
+  alias Core.Content
+
   import Mox
 
   test "doesn't get urls upon invalid url" do

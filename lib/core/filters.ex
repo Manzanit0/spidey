@@ -1,4 +1,4 @@
-defmodule Filters do
+defmodule Core.Filters do
   def non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
     Enum.filter(urls, fn url -> URI.parse(url).host == seed_host end)

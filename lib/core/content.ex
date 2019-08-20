@@ -1,10 +1,10 @@
-defmodule ContentBehaviour do
+defmodule Core.ContentBehaviour do
   @callback parse_links(String.t()) :: [String.t()]
   @callback get!(String.t()) :: String.t()
 end
 
-defmodule Content do
-  @behaviour ContentBehaviour
+defmodule Core.Content do
+  @behaviour Core.ContentBehaviour
 
   def parse_links(html) when is_binary(html) do
     html

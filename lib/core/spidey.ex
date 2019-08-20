@@ -1,8 +1,11 @@
-defmodule CrawlResult do
+defmodule Core.CrawlResult do
   defstruct [:scanned, :pending, :seed]
 end
 
-defmodule Spidey do
+defmodule Core.Spidey do
+  alias Core.CrawlResult
+  alias Core.Filters
+
   @content Application.get_env(:spidey, :content)
 
   def new(url) do

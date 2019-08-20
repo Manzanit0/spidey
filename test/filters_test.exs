@@ -1,6 +1,8 @@
 defmodule FiltersTest do
   use ExUnit.Case, async: true
 
+  alias Core.Filters
+
   test "filter urls whose domain doesn't match the seed's" do
     seed = "https://monzo.com/"
 
