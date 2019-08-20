@@ -24,7 +24,7 @@ defmodule Spidey do
     crawl(%CrawlResult{cr | pending: results, scanned: scanned ++ pending})
   end
 
-  def scan(url) do
+  def scan(url) when is_binary(url) do
     url
     |> @content.get!()
     |> @content.parse_links()
