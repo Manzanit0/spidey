@@ -14,7 +14,7 @@ defmodule Content do
 
   def get!(url) when is_binary(url) do
     url
-    |> HTTPoison.get!([], [timeout: 15_000, recv_timeout: 15_000])
+    |> HTTPoison.get!([], timeout: 15_000, recv_timeout: 15_000)
     |> Map.get(:body)
   end
 end

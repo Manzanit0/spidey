@@ -12,6 +12,6 @@ defmodule Mix.Tasks.Crawl do
     |> List.first()
     |> Spidey.new()
     |> Spidey.crawl()
-    |> IO.inspect
+    |> IO.inspect()
   end
 end

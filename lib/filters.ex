@@ -17,8 +17,7 @@ defmodule Filters do
          %URI{scheme: seed_scheme, host: seed_host} <- URI.parse(seed),
          scheme <- scheme(s, seed_scheme),
          host <- host(h, seed_host),
-         path <- path(p)
-    do
+         path <- path(p) do
       scheme <> host <> path
     else
       :error -> ""

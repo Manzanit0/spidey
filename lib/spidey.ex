@@ -31,8 +31,10 @@ defmodule Spidey do
       |> @content.get!()
       |> @content.parse_links()
     rescue
-      HTTPoison.Error -> [] # Timeout, wrong url, etc.
-      CaseClauseError -> [] # non-html format
+      # Timeout, wrong url, etc.
+      HTTPoison.Error -> []
+      # non-html format
+      CaseClauseError -> []
     end
   end
 
