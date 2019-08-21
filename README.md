@@ -1,5 +1,7 @@
 # Spidey
 
+[![Build Status](https://travis-ci.org/Manzanit0/spidey.svg?branch=master)](https://travis-ci.org/Manzanit0/spidey)
+
 Spidey is a basic web crawler written in Elixir which runs through all the links
 of a same domain and outputs them in a simple text sitemap format.
 
