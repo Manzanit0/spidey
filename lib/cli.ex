@@ -9,7 +9,7 @@ defmodule CLI do
 
   defp parse_params(args) do
     args
-    |> OptionParser.parse(strict: [site: :string, help: :boolean])
+    |> OptionParser.parse(strict: [site: :string, save: :boolean, help: :boolean])
     |> elem(0)
   end
 
@@ -21,7 +21,13 @@ defmodule CLI do
     site
     |> Spidey.new()
     |> Spidey.crawl()
-    |> Enum.map(&IO.inspect/1)
+  end
+
+  def execute(site: site, save: true) do
+    execute(site: site)
+    |> Core.File.save("results.txt")
+
+    IO.puts("Results saved successfully!")
   end
 
   def execute(_) do
