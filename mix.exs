@@ -9,6 +9,7 @@ defmodule Spidey.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
+      test_coverage: [tool: ExCoveralls],
       escript: [main_module: CLI]
     ]
   end
@@ -21,6 +22,7 @@ defmodule Spidey.MixProject do
     [
       {:httpoison, "~> 1.5"},
       {:floki, "~> 0.21.0"},
+      {:excoveralls, "~> 0.10", only: :test},
       {:mox, "~> 0.5", only: :test}
     ]
   end
