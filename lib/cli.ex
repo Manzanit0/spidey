@@ -14,7 +14,18 @@ defmodule CLI do
   end
 
   def execute(help: true) do
-    IO.puts("The two available parameters are --help and --site")
+    IO.puts(
+      """
+      usage: spidey [--help] [--site=<url>] [--save]
+
+      The most common use case is:
+        $ spidey --site https://medium.com/ --save
+
+      It will crawl the website fetching all the urls within the same
+      domain and save them to a text file in the same directory where
+      the application has been executed.
+      """
+    )
   end
 
   def execute(site: site) do

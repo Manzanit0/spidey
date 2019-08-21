@@ -1,6 +1,9 @@
 # Spidey
 
-Basic web crawler written in Elixir
+Spidey is a basic web crawler written in Elixir which runs through all the links
+of a same domain and outputs them in a simple text sitemap format.
+
+![Terminal output example](/terminal_output.png)
 
 ## Getting started 🛠
 
@@ -25,3 +28,10 @@ To crawl websites, run the escript `./spidey`:
 [Escripts](https://hexdocs.pm/mix/master/Mix.Tasks.Escript.Build.html)
 will run in any system which has Erlang/OTP installed, regardless
 if they have Elixir or not.
+
+## CLI options
+
+Spidey provides two main functionalities – crawling a specific domain and
+saving it to a file according to the [plain text site map protocol](https://www.sitemaps.org/protocol.html). For the latter, simply append `--save` to the execution.
+
+
