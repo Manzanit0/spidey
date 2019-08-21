@@ -1,6 +1,8 @@
 defmodule ContentTest do
   use ExUnit.Case, async: true
 
+  alias Core.Content
+
   @tag :callout
   test "fetches the content of a website" do
     content = Content.get!("https://monzo.com/")

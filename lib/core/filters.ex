@@ -1,4 +1,4 @@
-defmodule Filters do
+defmodule Core.Filters do
   def non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
     Enum.filter(urls, fn url -> URI.parse(url).host == seed_host end)
@@ -17,8 +17,7 @@ defmodule Filters do
          %URI{scheme: seed_scheme, host: seed_host} <- URI.parse(seed),
          scheme <- scheme(s, seed_scheme),
          host <- host(h, seed_host),
-         path <- path(p)
-    do
+         path <- path(p) do
       scheme <> host <> path
     else
       :error -> ""

@@ -22,3 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 spidey-*.tar
 
+# Elixir LS files
+.elixir_ls
+
+spidey
+results.txt

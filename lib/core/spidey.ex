@@ -1,8 +1,11 @@
-defmodule CrawlResult do
+defmodule Core.CrawlResult do
   defstruct [:scanned, :pending, :seed]
 end
 
-defmodule Spidey do
+defmodule Core.Spidey do
+  alias Core.CrawlResult
+  alias Core.Filters
+
   @content Application.get_env(:spidey, :content)
 
   def new(url) do
@@ -31,8 +34,10 @@ defmodule Spidey do
       |> @content.get!()
       |> @content.parse_links()
     rescue
-      HTTPoison.Error -> [] # Timeout, wrong url, etc.
-      CaseClauseError -> [] # non-html format
+      # Timeout, wrong url, etc.
+      HTTPoison.Error -> []
+      # non-html format
+      CaseClauseError -> []
     end
   end
 
