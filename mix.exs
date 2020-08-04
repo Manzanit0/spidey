@@ -20,7 +20,7 @@ defmodule Spidey.MixProject do
 
   defp deps do
     [
-      {:httpoison, "~> 1.5"},
+      {:httpoison, "~> 1.7.0"},
       {:floki, "~> 0.21.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mox, "~> 0.5", only: :test}

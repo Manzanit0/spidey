@@ -35,9 +35,14 @@ defmodule Core.Spidey do
       |> @content.parse_links()
     rescue
       # Timeout, wrong url, etc.
-      HTTPoison.Error -> []
+      e in HTTPoison.Error ->
+        IO.inspect(e)
+        []
+
       # non-html format
-      CaseClauseError -> []
+      e in CaseClauseError ->
+        IO.inspect(e)
+        []
     end
   end
 
