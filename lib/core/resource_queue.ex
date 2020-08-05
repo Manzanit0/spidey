@@ -1,4 +1,4 @@
-defmodule Core.ResourceQueue do
+defmodule Spidey.Core.ResourceQueue do
   use Agent
 
   def start_link(urls) do

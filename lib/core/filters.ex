@@ -1,4 +1,4 @@
-defmodule Core.Filters do
+defmodule Spidey.Core.Filters do
   def reject_invalid_urls(urls) do
     urls
     |> Enum.reject(&is_nil/1)

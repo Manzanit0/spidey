@@ -1,18 +1,14 @@
-defmodule Core.CrawlResult do
-  defstruct [:scanned, :pending, :seed]
-end
+defmodule Spidey do
+  defmodule CrawlResult do
+    defstruct [:scanned, :pending, :seed]
+  end
 
-defmodule Core.Spidey do
-  alias Core.CrawlResult
-  alias Core.Filters
-  alias Core.ResourceQueue, as: Queue
+  alias Spidey.Core.Filters
+  alias Spidey.Core.ResourceQueue, as: Queue
 
   @content Application.get_env(:spidey, :content)
 
   def new(url) do
-    children = [{Queue, []}]
-    Supervisor.start_link(children, strategy: :one_for_one, name: Spidey.Supervisor)
-
     %CrawlResult{seed: url, scanned: [], pending: [url]}
   end
 

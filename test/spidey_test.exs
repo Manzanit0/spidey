@@ -1,8 +1,7 @@
 defmodule SpideyTest do
   use ExUnit.Case, async: true
 
-  alias Core.Spidey
-  alias Core.Content
+  alias Spidey.Core.Content
 
   import Mox
 

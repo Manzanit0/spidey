@@ -1,7 +1,7 @@
 defmodule ContentTest do
   use ExUnit.Case, async: true
 
-  alias Core.Content
+  alias Spidey.Core.Content
 
   @tag :callout
   test "fetches the content of a website" do

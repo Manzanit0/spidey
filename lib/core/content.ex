@@ -1,10 +1,10 @@
-defmodule Core.ContentBehaviour do
+defmodule Spidey.Core.ContentBehaviour do
   @callback parse_links(String.t()) :: [String.t()]
   @callback get!(String.t()) :: String.t()
 end
 
-defmodule Core.Content do
-  @behaviour Core.ContentBehaviour
+defmodule Spidey.Core.Content do
+  @behaviour Spidey.Core.ContentBehaviour
 
   def parse_links(html) when is_binary(html) do
     html

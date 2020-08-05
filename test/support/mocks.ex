@@ -1,1 +1,1 @@
-Mox.defmock(ContentMock, for: Core.ContentBehaviour)
+Mox.defmock(ContentMock, for: Spidey.Core.ContentBehaviour)

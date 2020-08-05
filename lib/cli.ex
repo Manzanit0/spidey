@@ -1,6 +1,4 @@
 defmodule CLI do
-  alias Core.Spidey
-
   def main(args) do
     args
     |> parse_params()
@@ -35,7 +33,7 @@ defmodule CLI do
   def execute(site: site, save: true) do
     site
     |> run_crawl()
-    |> Core.File.save("results.txt")
+    |> Spidey.Core.File.save("results.txt")
 
     IO.puts("Results saved successfully!")
   end
