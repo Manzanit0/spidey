@@ -1,7 +1,8 @@
-defmodule SpideyTest do
+defmodule CrawlerTest do
   use ExUnit.Case, async: true
 
   alias Spidey.Core.Content
+  alias Spidey.Core.Crawler
 
   import Mox
 
@@ -11,8 +12,8 @@ defmodule SpideyTest do
 
     results =
       "wrong-url.com"
-      |> Spidey.new()
-      |> Spidey.crawl()
+      |> Crawler.new()
+      |> Crawler.crawl()
 
     assert ["wrong-url.com"] == results
   end
@@ -55,8 +56,8 @@ defmodule SpideyTest do
 
     results =
       "https://depth.com"
-      |> Spidey.new()
-      |> Spidey.crawl()
+      |> Crawler.new()
+      |> Crawler.crawl()
 
     assert [
              "https://depth.com",
@@ -80,7 +81,7 @@ defmodule SpideyTest do
     |> expect(:get!, 1, fn _ -> html end)
     |> expect(:parse_links, 1, &Content.parse_links/1)
 
-    results = Spidey.scan("some.url")
+    results = Crawler.scan("some.url")
 
     assert ["https://jgarcia.blog", "https://jgarcia.site"] == results
   end

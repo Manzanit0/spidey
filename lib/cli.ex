@@ -26,25 +26,19 @@ defmodule CLI do
 
   def execute(site: site) do
     site
-    |> run_crawl()
+    |> Spidey.crawl()
     |> Enum.map(&IO.puts/1)
   end
 
   def execute(site: site, save: true) do
     site
-    |> run_crawl()
-    |> Spidey.Core.File.save("results.txt")
+    |> Spidey.crawl()
+    |> Spidey.save_results("results.txt")
 
     IO.puts("Results saved successfully!")
   end
 
   def execute(_) do
     IO.puts("That is not a valid spidey command. See 'spidey --help'.")
-  end
-
-  defp run_crawl(site) do
-    site
-    |> Spidey.new()
-    |> Spidey.crawl()
   end
 end
