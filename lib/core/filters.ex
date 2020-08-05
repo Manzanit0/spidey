@@ -1,26 +1,34 @@
 defmodule Core.Filters do
-  def non_domain_urls(urls, seed) do
+  def reject_invalid_urls(urls) do
+    urls
+    |> Enum.reject(&is_nil/1)
+    |> Enum.reject(&(&1 == ""))
+  end
+
+  def reject_non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
     Enum.filter(urls, fn url -> URI.parse(url).host == seed_host end)
   end
 
-  def already_scanned_urls(urls, scanned) do
-    Enum.filter(urls, fn x -> !Enum.member?(scanned, x) end)
+  def reject_already_scanned_urls(urls, scanned) do
+    Enum.reject(urls, fn x -> Enum.member?(scanned, x) end)
   end
 
   def process_relative_urls(urls, seed) do
-    Enum.map(urls, fn url -> to_absolute_url(url, seed) end)
+    urls
+    |> Enum.map(fn url -> to_absolute_url(url, seed) end)
+    |> Enum.reject(&(&1 == ""))
   end
 
   defp to_absolute_url(url, seed) do
     with %URI{scheme: s, host: h, path: p} <- URI.parse(url),
          %URI{scheme: seed_scheme, host: seed_host} <- URI.parse(seed),
          scheme <- scheme(s, seed_scheme),
-         host <- host(h, seed_host),
+         {:ok, host} <- host(h, seed_host),
          path <- path(p) do
       scheme <> host <> path
     else
-      :error -> ""
+      _ -> ""
     end
   end
 
@@ -28,8 +36,8 @@ defmodule Core.Filters do
   defp scheme(_, s) when s != nil and s != "", do: s <> "://"
   defp scheme(_, _), do: "http://"
 
-  defp host(h, _) when h != nil and h != "", do: h
-  defp host(_, s) when s != nil and s != "", do: s
+  defp host(h, _) when h != nil and h != "", do: {:ok, h}
+  defp host(_, s) when s != nil and s != "", do: {:ok, s}
   defp host(_, _), do: {:error, "nil or empty host"}
 
   defp path(nil), do: "/"

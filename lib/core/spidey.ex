@@ -5,27 +5,30 @@ end
 defmodule Core.Spidey do
   alias Core.CrawlResult
   alias Core.Filters
+  alias Core.ResourceQueue, as: Queue
 
   @content Application.get_env(:spidey, :content)
 
   def new(url) do
+    children = [{Queue, []}]
+    Supervisor.start_link(children, strategy: :one_for_one, name: Spidey.Supervisor)
+
     %CrawlResult{seed: url, scanned: [], pending: [url]}
   end
 
-  def crawl(%CrawlResult{scanned: scanned, pending: []}) do
-    Enum.uniq(scanned)
-  end
+  def crawl(%CrawlResult{scanned: scanned, pending: []}), do: Enum.uniq(scanned)
 
-  def crawl(%CrawlResult{pending: pending, scanned: scanned, seed: seed} = cr) do
-    results =
-      pending
-      |> scan_async()
-      |> Filters.process_relative_urls(seed)
-      |> Filters.already_scanned_urls(scanned ++ pending)
-      |> Filters.non_domain_urls(seed)
-      |> Enum.uniq()
+  def crawl(%{seed: seed, scanned: scanned, pending: pending} = cr) do
+    pending
+    |> scan_async()
+    |> Filters.process_relative_urls(seed)
+    |> Filters.reject_non_domain_urls(seed)
+    |> Filters.reject_already_scanned_urls(scanned ++ pending)
+    |> Filters.reject_invalid_urls()
+    |> Enum.uniq()
+    |> Enum.map(&Queue.push/1)
 
-    crawl(%CrawlResult{cr | pending: results, scanned: scanned ++ pending})
+    crawl(%CrawlResult{cr | scanned: scanned ++ pending, pending: Queue.take(20)})
   end
 
   def scan(url) when is_binary(url) do
@@ -36,12 +39,12 @@ defmodule Core.Spidey do
     rescue
       # Timeout, wrong url, etc.
       e in HTTPoison.Error ->
-        IO.inspect(e)
+        IO.inspect(e, label: :url_scan_error)
         []
 
       # non-html format
       e in CaseClauseError ->
-        IO.inspect(e)
+        IO.inspect(e, label: :url_scan_error)
         []
     end
   end

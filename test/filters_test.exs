@@ -14,7 +14,7 @@ defmodule FiltersTest do
       "http://jgarcia.blog"
     ]
 
-    filtered_urls = Filters.non_domain_urls(scanned_urls, seed)
+    filtered_urls = Filters.reject_non_domain_urls(scanned_urls, seed)
 
     assert ["http://monzo.com/careers"] == filtered_urls
   end
@@ -30,7 +30,7 @@ defmodule FiltersTest do
       "http://monzo.com/blog"
     ]
 
-    filtered_urls = Filters.already_scanned_urls(urls, scanned_urls)
+    filtered_urls = Filters.reject_already_scanned_urls(urls, scanned_urls)
 
     assert ["http://monzo.com/careers"] == filtered_urls
   end
