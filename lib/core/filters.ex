@@ -1,4 +1,12 @@
 defmodule Spidey.Core.Filters do
+  def strip_query_params(urls) do
+    Enum.map(urls, fn s -> String.split(s, "?") |> List.first() end)
+  end
+
+  def strip_trailing_slashes(urls) do
+    Enum.map(urls, fn s -> String.replace_trailing(s, "/", "") end)
+  end
+
   def reject_invalid_urls(urls) do
     urls
     |> Enum.reject(&is_nil/1)

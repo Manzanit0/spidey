@@ -18,6 +18,8 @@ defmodule Spidey.Core.Crawler do
     cr.pending
     |> scan_async()
     |> Filters.process_relative_urls(cr.seed)
+    |> Filters.strip_query_params()
+    |> Filters.strip_trailing_slashes()
     |> Filters.reject_non_domain_urls(cr.seed)
     |> Filters.reject_already_scanned_urls(cr.scanned ++ cr.pending)
     |> Filters.reject_invalid_urls()
@@ -50,7 +52,7 @@ defmodule Spidey.Core.Crawler do
   def scan_async(urls) when is_list(urls) do
     urls
     |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
-    |> Enum.map(fn t -> Task.await(t, 15_000) end)
+    |> Enum.map(fn t -> Task.await(t, 30_000) end)
     |> List.flatten()
   end
 end
