@@ -31,9 +31,7 @@ defmodule CLI do
   end
 
   def execute(site: site, save: true) do
-    site
-    |> Spidey.crawl()
-    |> Spidey.save_results("results.txt")
+    Spidey.crawl_to_file(site, "results.txt")
 
     IO.puts("Results saved successfully!")
   end

@@ -8,14 +8,16 @@ defmodule Spidey do
   alias Spidey.Core.File
 
   @doc "Crawls a website for all the same-domain urls, returning a list."
-  def crawl(url) do
+  def crawl(url) when is_binary(url) do
     url
     |> Crawler.new()
     |> Crawler.crawl()
   end
 
-  @doc "Saves a list of urls to file"
-  def save_results(urls, path) when is_list(urls) do
-    File.save(urls, path)
+  @doc "Crawls a website for all the sam-domain urls and Saves the list of urls to file"
+  def crawl_to_file(url, path) when is_binary(url) do
+    url
+    |> crawl()
+    |> File.save(path)
   end
 end
