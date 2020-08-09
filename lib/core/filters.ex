@@ -15,7 +15,7 @@ defmodule Spidey.Core.Filters do
 
   def reject_non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
-    Enum.filter(urls, fn url -> URI.parse(url).host == seed_host end)
+    Enum.reject(urls, fn url -> URI.parse(url).host != seed_host end)
   end
 
   def reject_already_scanned_urls(urls, scanned) do

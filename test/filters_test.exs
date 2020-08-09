@@ -3,7 +3,7 @@ defmodule FiltersTest do
 
   alias Spidey.Core.Filters
 
-  test "filter urls whose domain doesn't match the seed's" do
+  test "reject urls whose domain doesn't match the seed's" do
     seed = "https://monzo.com/"
 
     scanned_urls = [
@@ -19,7 +19,7 @@ defmodule FiltersTest do
     assert ["http://monzo.com/careers"] == filtered_urls
   end
 
-  test "filter already scanned urls" do
+  test "reject already scanned urls" do
     urls = [
       "http://monzo.com/careers",
       "http://monzo.com/blog"
@@ -69,5 +69,27 @@ defmodule FiltersTest do
              "https://jgarcia.com/home",
              "https://jgarcia.com/services"
            ] == processed_urls
+  end
+
+  test "strip trailing slashes from a URL" do
+    urls = [
+      "https://jgarcia.com/home/something-else-here/",
+      "https://jgarcia.com/////"
+    ]
+
+    filtered = Filters.strip_trailing_slashes(urls)
+
+    assert ["https://jgarcia.com/home/something-else-here", "https://jgarcia.com"] == filtered
+  end
+
+  test "strip query params" do
+    urls = [
+      "https://jgarcia.com/home/something-else-here?q=foo",
+      "https://jgarcia.com?q=foo&hey=ho"
+    ]
+
+    filtered = Filters.strip_query_params(urls)
+
+    assert ["https://jgarcia.com/home/something-else-here", "https://jgarcia.com"] == filtered
   end
 end
