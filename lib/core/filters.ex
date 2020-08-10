@@ -13,6 +13,24 @@ defmodule Spidey.Core.Filters do
     |> Enum.reject(&(&1 == ""))
   end
 
+  def reject_static_resources(urls) do
+    urls
+    # All WordPress static content
+    |> Enum.reject(&String.contains?(&1, "wp-content"))
+    # images & other assets
+    |> Enum.reject(&String.ends_with?(&1, ".jpg"))
+    |> Enum.reject(&String.ends_with?(&1, ".jpeg"))
+    |> Enum.reject(&String.ends_with?(&1, ".png"))
+    |> Enum.reject(&String.ends_with?(&1, ".gif"))
+    |> Enum.reject(&String.ends_with?(&1, ".pdf"))
+    # amp.dev
+    |> Enum.reject(&String.ends_with?(&1, "amp/"))
+    |> Enum.reject(&String.ends_with?(&1, "amp"))
+    # RSS
+    |> Enum.reject(&String.ends_with?(&1, "feed/"))
+    |> Enum.reject(&String.ends_with?(&1, "feed"))
+  end
+
   def reject_non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
     Enum.reject(urls, fn url -> URI.parse(url).host != seed_host end)

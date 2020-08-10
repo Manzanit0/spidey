@@ -21,8 +21,10 @@ defmodule Spidey.Core.Crawler do
     |> Filters.strip_query_params()
     |> Filters.strip_trailing_slashes()
     |> Filters.reject_non_domain_urls(cr.seed)
+    # FIXME this is actually not filtering urls in the queue!!
     |> Filters.reject_already_scanned_urls(cr.scanned ++ cr.pending)
     |> Filters.reject_invalid_urls()
+    |> Filters.reject_static_resources()
     |> Enum.uniq()
     |> Enum.map(&Queue.push/1)
 
