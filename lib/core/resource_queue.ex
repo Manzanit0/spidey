@@ -1,4 +1,4 @@
-defmodule Spidey.Core.ResourceQueue do
+defmodule Spidey.Core.Queue do
   use Agent
 
   def start_link(urls) do
@@ -14,9 +14,14 @@ defmodule Spidey.Core.ResourceQueue do
   end
 
   def take(n) do
-    1..n
-    |> Enum.map(fn _ -> pop() end)
-    |> Enum.reject(&(&1 == :empty))
+    queue = Agent.get(__MODULE__, & &1)
+
+    # d = DateTime.utc_now()
+    # IO.inspect("#{d.hour}:#{d.minute}:#{d.second} Queue size pre-take: #{:queue.len(queue)}")
+
+    {queue, elems} = pop_multiple(queue, n)
+    Agent.update(__MODULE__, fn _ -> queue end)
+    elems
   end
 
   def push(url) do
@@ -24,9 +29,19 @@ defmodule Spidey.Core.ResourceQueue do
   end
 
   defp pop_value(queue) do
-    # IO.inspect("Queue size: #{:queue.len(queue)}")
     case :queue.out(queue) do
       {{:value, value}, queue} -> {value, queue}
+      {:empty, queue} -> {:empty, queue}
+    end
+  end
+
+  defp pop_multiple(queue, n, elems \\ [])
+
+  defp pop_multiple(queue, 0, elems), do: {queue, elems}
+
+  defp pop_multiple(queue, n, elems) do
+    case :queue.out(queue) do
+      {{:value, value}, queue} -> pop_multiple(queue, n - 1, [value | elems])
       {:empty, queue} -> {:empty, queue}
     end
   end

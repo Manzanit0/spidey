@@ -3,7 +3,7 @@ defmodule Spidey.Application do
 
   def start(_type, _args) do
     children = [
-      {Spidey.Core.ResourceQueue, []},
+      {Spidey.Core.Queue, []},
       {Registry, [keys: :unique, name: Spidey.UrlRegistry]}
     ]
 

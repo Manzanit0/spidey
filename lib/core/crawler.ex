@@ -4,7 +4,7 @@ defmodule Spidey.Core.Crawler do
   end
 
   alias Spidey.Core.Filters
-  alias Spidey.Core.ResourceQueue, as: Queue
+  alias Spidey.Core.Queue
   alias Spidey.Core.UrlStore
 
   @content Application.get_env(:spidey, :content)
