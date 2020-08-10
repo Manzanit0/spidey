@@ -42,7 +42,7 @@ defmodule Spidey.Core.Queue do
   defp pop_multiple(queue, n, elems) do
     case :queue.out(queue) do
       {{:value, value}, queue} -> pop_multiple(queue, n - 1, [value | elems])
-      {:empty, queue} -> {:empty, queue}
+      {:empty, queue} -> {queue, elems}
     end
   end
 end

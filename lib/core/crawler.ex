@@ -30,7 +30,7 @@ defmodule Spidey.Core.Crawler do
     |> Enum.uniq()
     |> Enum.map(&push_to_stores/1)
 
-    crawl(%CrawlResult{cr | pending: Queue.take(20)})
+    crawl(%CrawlResult{cr | pending: Queue.take(50)})
   end
 
   def scan(url) when is_binary(url) do
