@@ -8,13 +8,14 @@ defmodule Spidey.Core.Content do
 
   def parse_links(html) when is_binary(html) do
     html
-    |> Floki.find("* a")
+    |> Floki.parse_document!()
+    |> Floki.find("*[href]")
     |> Floki.attribute("href")
   end
 
   def get!(url) when is_binary(url) do
     url
-    |> HTTPoison.get!([], timeout: 15_000, recv_timeout: 15_000)
+    |> HTTPoison.get!([], timeout: 15_000, recv_timeout: 15_000, follow_redirect: true)
     |> Map.get(:body)
   end
 end
