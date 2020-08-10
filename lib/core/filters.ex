@@ -23,6 +23,10 @@ defmodule Spidey.Core.Filters do
     |> Enum.reject(&String.ends_with?(&1, ".png"))
     |> Enum.reject(&String.ends_with?(&1, ".gif"))
     |> Enum.reject(&String.ends_with?(&1, ".pdf"))
+    |> Enum.reject(&String.ends_with?(&1, ".xml"))
+    |> Enum.reject(&String.ends_with?(&1, ".php"))
+    |> Enum.reject(&String.ends_with?(&1, ".js"))
+    |> Enum.reject(&String.ends_with?(&1, ".css"))
     # amp.dev
     |> Enum.reject(&String.ends_with?(&1, "amp/"))
     |> Enum.reject(&String.ends_with?(&1, "amp"))

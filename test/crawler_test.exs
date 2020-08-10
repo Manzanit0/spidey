@@ -60,10 +60,10 @@ defmodule CrawlerTest do
       |> Crawler.crawl()
 
     assert [
-             "https://depth.com",
-             "https://depth.com/1",
+             "https://depth.com/3",
              "https://depth.com/2",
-             "https://depth.com/3"
+             "https://depth.com/1",
+             "https://depth.com"
            ] == results
   end
 

@@ -1,18 +1,21 @@
 defmodule Spidey.Core.Crawler do
   defmodule CrawlResult do
-    defstruct [:scanned, :pending, :seed]
+    defstruct [:pending, :seed]
   end
 
   alias Spidey.Core.Filters
   alias Spidey.Core.ResourceQueue, as: Queue
+  alias Spidey.Core.UrlStore
 
   @content Application.get_env(:spidey, :content)
 
   def new(url) do
-    %CrawlResult{seed: url, scanned: [], pending: [url]}
+    UrlStore.add(url)
+
+    %CrawlResult{seed: url, pending: [url]}
   end
 
-  def crawl(%CrawlResult{pending: []} = cr), do: Enum.uniq(cr.scanned)
+  def crawl(%CrawlResult{pending: []}), do: UrlStore.retrieve_all()
 
   def crawl(%CrawlResult{} = cr) do
     cr.pending
@@ -20,15 +23,14 @@ defmodule Spidey.Core.Crawler do
     |> Filters.process_relative_urls(cr.seed)
     |> Filters.strip_query_params()
     |> Filters.strip_trailing_slashes()
+    |> Enum.reject(&UrlStore.exists?/1)
     |> Filters.reject_non_domain_urls(cr.seed)
-    # FIXME this is actually not filtering urls in the queue!!
-    |> Filters.reject_already_scanned_urls(cr.scanned ++ cr.pending)
     |> Filters.reject_invalid_urls()
     |> Filters.reject_static_resources()
     |> Enum.uniq()
-    |> Enum.map(&Queue.push/1)
+    |> Enum.map(&push_to_stores/1)
 
-    crawl(%CrawlResult{cr | scanned: cr.scanned ++ cr.pending, pending: Queue.take(20)})
+    crawl(%CrawlResult{cr | pending: Queue.take(20)})
   end
 
   def scan(url) when is_binary(url) do
@@ -56,5 +58,10 @@ defmodule Spidey.Core.Crawler do
     |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
     |> Enum.map(fn t -> Task.await(t, 30_000) end)
     |> List.flatten()
+  end
+
+  defp push_to_stores(url) do
+    Queue.push(url)
+    UrlStore.add(url)
   end
 end
