@@ -45,4 +45,9 @@ defmodule Spidey.Core.Queue do
       {:empty, queue} -> {queue, elems}
     end
   end
+
+  def length do
+    queue = Agent.get(__MODULE__, & &1)
+    :queue.len(queue)
+  end
 end

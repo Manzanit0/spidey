@@ -3,8 +3,7 @@ defmodule Spidey.Application do
 
   def start(_type, _args) do
     children = [
-      {Spidey.Core.Queue, []},
-      {Registry, [keys: :unique, name: Spidey.UrlRegistry]}
+      {Spidey.Core.Queue, []}
     ]
 
     opts = [strategy: :one_for_one, name: Spidey.Supervisor]

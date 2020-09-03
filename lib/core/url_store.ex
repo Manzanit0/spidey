@@ -1,17 +1,23 @@
 defmodule Spidey.Core.UrlStore do
+  def init do
+    case :ets.info(:urls) do
+      :undefined -> :ets.new(:urls, [:set, :public, :named_table])
+      _ -> :already_initialised
+    end
+  end
+
   def add(url) do
-    Registry.register(Spidey.UrlRegistry, url, url)
-    :ok
+    :ets.insert_new(:urls, {url})
   end
 
   def exists?(url) do
-    case Registry.lookup(Spidey.UrlRegistry, url) do
+    case :ets.lookup(:urls, url) do
       [] -> false
-      [{_pid, _url}] -> true
+      _ -> true
     end
   end
 
   def retrieve_all do
-    Registry.keys(Spidey.UrlRegistry, self())
+    :ets.match(:urls, {:"$1"})
   end
 end
