@@ -9,64 +9,60 @@ defmodule Spidey.Filter.DefaultFilter do
     |> process_relative_urls(seed)
     |> strip_query_params()
     |> strip_trailing_slashes()
-    |> Enum.reject(&UrlStore.exists?/1)
+    |> Stream.reject(&UrlStore.exists?/1)
     |> reject_non_domain_urls(seed)
     |> reject_invalid_urls()
     |> reject_static_resources()
-    |> Enum.uniq()
+    |> Stream.uniq()
   end
 
   def strip_query_params(urls) do
-    Enum.map(urls, fn s -> String.split(s, "?") |> List.first() end)
+    Stream.map(urls, fn s -> String.split(s, "?") |> List.first() end)
   end
 
   def strip_trailing_slashes(urls) do
-    Enum.map(urls, fn s -> String.replace_trailing(s, "/", "") end)
+    Stream.map(urls, fn s -> String.replace_trailing(s, "/", "") end)
   end
 
   def reject_invalid_urls(urls) do
     urls
-    |> Enum.reject(&is_nil/1)
-    |> Enum.reject(&(&1 == ""))
+    |> Stream.reject(&is_nil/1)
+    |> Stream.reject(&(&1 == ""))
   end
 
   def reject_static_resources(urls) do
     urls
     # Wordpress links
-    |> Enum.reject(&String.contains?(&1, "wp-content"))
-    |> Enum.reject(&String.contains?(&1, "wp-json"))
-    |> Enum.reject(&String.contains?(&1, "wprm_print"))
+    |> Stream.reject(&String.contains?(&1, "wp-content"))
+    |> Stream.reject(&String.contains?(&1, "wp-json"))
+    |> Stream.reject(&String.contains?(&1, "wprm_print"))
     # images & other assets
-    |> Enum.reject(&String.ends_with?(&1, ".jpg"))
-    |> Enum.reject(&String.ends_with?(&1, ".jpeg"))
-    |> Enum.reject(&String.ends_with?(&1, ".png"))
-    |> Enum.reject(&String.ends_with?(&1, ".gif"))
-    |> Enum.reject(&String.ends_with?(&1, ".pdf"))
-    |> Enum.reject(&String.ends_with?(&1, ".xml"))
-    |> Enum.reject(&String.ends_with?(&1, ".php"))
-    |> Enum.reject(&String.ends_with?(&1, ".js"))
-    |> Enum.reject(&String.ends_with?(&1, ".css"))
+    |> Stream.reject(&String.ends_with?(&1, ".jpg"))
+    |> Stream.reject(&String.ends_with?(&1, ".jpeg"))
+    |> Stream.reject(&String.ends_with?(&1, ".png"))
+    |> Stream.reject(&String.ends_with?(&1, ".gif"))
+    |> Stream.reject(&String.ends_with?(&1, ".pdf"))
+    |> Stream.reject(&String.ends_with?(&1, ".xml"))
+    |> Stream.reject(&String.ends_with?(&1, ".php"))
+    |> Stream.reject(&String.ends_with?(&1, ".js"))
+    |> Stream.reject(&String.ends_with?(&1, ".css"))
     # amp.dev
-    |> Enum.reject(&String.ends_with?(&1, "amp/"))
-    |> Enum.reject(&String.ends_with?(&1, "amp"))
+    |> Stream.reject(&String.ends_with?(&1, "amp/"))
+    |> Stream.reject(&String.ends_with?(&1, "amp"))
     # RSS
-    |> Enum.reject(&String.ends_with?(&1, "feed/"))
-    |> Enum.reject(&String.ends_with?(&1, "feed"))
+    |> Stream.reject(&String.ends_with?(&1, "feed/"))
+    |> Stream.reject(&String.ends_with?(&1, "feed"))
   end
 
   def reject_non_domain_urls(urls, seed) do
     %URI{host: seed_host} = URI.parse(seed)
-    Enum.reject(urls, fn url -> URI.parse(url).host != seed_host end)
-  end
-
-  def reject_already_scanned_urls(urls, scanned) do
-    Enum.reject(urls, fn x -> Enum.member?(scanned, x) end)
+    Stream.reject(urls, fn url -> URI.parse(url).host != seed_host end)
   end
 
   def process_relative_urls(urls, seed) do
     urls
-    |> Enum.map(fn url -> to_absolute_url(url, seed) end)
-    |> Enum.reject(&(&1 == ""))
+    |> Stream.map(fn url -> to_absolute_url(url, seed) end)
+    |> Stream.reject(&(&1 == ""))
   end
 
   defp to_absolute_url(url, seed) do
