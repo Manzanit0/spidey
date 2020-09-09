@@ -1,53 +1,40 @@
 defmodule Spidey.Core.Worker do
   use GenServer, restart: :transient
 
-  alias Spidey.Core.Crawler
+  alias Spidey.Core.Filters
+  alias Spidey.Core.UrlStore
   alias Spidey.Core.Queue
   alias Spidey.Core.UrlStore
+  alias Spidey.Core.Content
 
   require Logger
 
-  def start_link(seed: seed, work_size: work_size) do
-    {:ok, pid} = GenServer.start_link(__MODULE__, %{seed: seed, work_size: work_size})
-    Process.send(pid, {:work, 0}, [])
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, %{})
+  end
 
-    Logger.info("started worker #{inspect(pid)}")
-    {:ok, pid}
+  def crawl(pid, url, seed) when is_binary(url) do
+    Logger.info("crawling url: #{url}")
+    GenServer.call(pid, {:work, url, seed}, 60_000)
   end
 
   @impl true
-  def init(seed) do
-    {:ok, seed}
+  def init(state) do
+    {:ok, state}
   end
 
   @impl true
-  def handle_info({:work, 3}, _state) do
-    {:stop, :normal, %{}}
+  def handle_call({:work, url, seed}, _from, state) do
+    url
+    |> Content.scan()
+    |> Filters.filter_relevant_urls(seed)
+    |> Enum.map(&push_to_stores/1)
+
+    {:reply, :ok, state}
   end
 
-  @impl true
-  def handle_info({:work, retries}, %{seed: seed, work_size: work_size} = state) do
-    if Queue.length() > 0 do
-      work_size
-      |> Queue.take()
-      |> Crawler.crawl(seed)
-      |> Enum.map(fn url ->
-        Queue.push(url)
-        UrlStore.add(url)
-      end)
-
-      Process.send(self(), {:work, 0}, [])
-    else
-      # If there is no work to do, wait a little and retry, up to 3 times.
-      Process.send_after(self(), {:work, retries + 1}, retries * 800)
-    end
-
-    {:noreply, state}
-  end
-
-  @impl true
-  def terminate(reason, state) do
-    Logger.info("terminating worker #{inspect(self())} due to #{reason}")
-    state
+  defp push_to_stores(url) do
+    Queue.push(url)
+    UrlStore.add(url)
   end
 end

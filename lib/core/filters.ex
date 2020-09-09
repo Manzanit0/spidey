@@ -1,4 +1,23 @@
 defmodule Spidey.Core.Filters do
+  alias Spidey.Core.UrlStore
+
+  @doc """
+  Applies a compound filter of most of the relevant filters in the module to
+  effectively discard already processed urls, invalid urls, static resources.
+  For this it leverages the module `Spidey.Core.UrlStore`.
+  """
+  def filter_relevant_urls(urls, seed) do
+    urls
+    |> process_relative_urls(seed)
+    |> strip_query_params()
+    |> strip_trailing_slashes()
+    |> Enum.reject(&UrlStore.exists?/1)
+    |> reject_non_domain_urls(seed)
+    |> reject_invalid_urls()
+    |> reject_static_resources()
+    |> Enum.uniq()
+  end
+
   def strip_query_params(urls) do
     Enum.map(urls, fn s -> String.split(s, "?") |> List.first() end)
   end
@@ -15,8 +34,10 @@ defmodule Spidey.Core.Filters do
 
   def reject_static_resources(urls) do
     urls
-    # All WordPress static content
+    # Wordpress links
     |> Enum.reject(&String.contains?(&1, "wp-content"))
+    |> Enum.reject(&String.contains?(&1, "wp-json"))
+    |> Enum.reject(&String.contains?(&1, "wprm_print"))
     # images & other assets
     |> Enum.reject(&String.ends_with?(&1, ".jpg"))
     |> Enum.reject(&String.ends_with?(&1, ".jpeg"))

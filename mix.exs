@@ -26,7 +26,8 @@ defmodule Spidey.MixProject do
       {:httpoison, "~> 1.7.0"},
       {:floki, "~> 0.27.0"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:mox, "~> 0.5", only: :test}
+      {:mox, "~> 0.5", only: :test},
+      {:poolboy, "~> 1.5"}
     ]
   end
 

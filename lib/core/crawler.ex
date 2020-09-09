@@ -1,46 +1,38 @@
 defmodule Spidey.Core.Crawler do
-  alias Spidey.Core.Filters
   alias Spidey.Core.UrlStore
+  alias Spidey.Core.Queue
+  alias Spidey.Core.Worker
 
-  @content Application.get_env(:spidey, :content)
+  @worker_timeout 60_000
 
-  def crawl(urls, seed) do
-    urls
-    |> scan_async()
-    |> Filters.process_relative_urls(seed)
-    |> Filters.strip_query_params()
-    |> Filters.strip_trailing_slashes()
-    |> Enum.reject(&UrlStore.exists?/1)
-    |> Filters.reject_non_domain_urls(seed)
-    |> Filters.reject_invalid_urls()
-    |> Filters.reject_static_resources()
-    |> Enum.uniq()
+  def crawl(seed) do
+    UrlStore.init()
+    UrlStore.add(seed)
+    Queue.push(seed)
+
+    crawl_queue(seed)
   end
 
-  defp scan_async([]), do: []
+  defp crawl_queue(seed) do
+    if Queue.length() == 0 do
+      UrlStore.retrieve_all()
+    else
+      Queue.length()
+      |> Queue.take()
+      |> Enum.map(&crawl_via_worker(&1, seed))
+      |> Enum.map(&Task.await(&1, @worker_timeout))
 
-  defp scan_async(urls) when is_list(urls) do
-    urls
-    |> Enum.map(fn url -> Task.async(fn -> scan(url) end) end)
-    |> Enum.map(fn t -> Task.await(t, 30_000) end)
-    |> List.flatten()
-  end
-
-  defp scan(url) when is_binary(url) do
-    try do
-      url
-      |> @content.get!()
-      |> @content.parse_links()
-    rescue
-      # Timeout, wrong url, etc.
-      e in HTTPoison.Error ->
-        IO.inspect(e, label: :url_scan_error)
-        []
-
-      # non-html format
-      e in CaseClauseError ->
-        IO.inspect(e, label: :url_scan_error)
-        []
+      crawl_queue(seed)
     end
+  end
+
+  defp crawl_via_worker(url, seed) do
+    Task.async(fn ->
+      :poolboy.transaction(
+        :crawler_pool,
+        fn pid -> Worker.crawl(pid, url, seed) end,
+        @worker_timeout
+      )
+    end)
   end
 end
