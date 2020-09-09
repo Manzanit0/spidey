@@ -6,18 +6,19 @@ defmodule Spidey.Crawler do
   @worker_timeout 60_000
 
   def crawl(seed) do
-    UrlStore.init()
-    UrlStore.add(seed)
+    UrlStore.init(seed)
     Queue.push(seed)
 
     crawl_queue(seed)
   end
 
   defp crawl_queue(seed) do
-    if Queue.length() == 0 do
+    queue_length = Queue.length()
+
+    if queue_length == 0 do
       UrlStore.retrieve_all()
     else
-      Queue.length()
+      queue_length
       |> Queue.take()
       |> Enum.map(&crawl_via_worker(&1, seed))
       |> Enum.map(&Task.await(&1, @worker_timeout))
