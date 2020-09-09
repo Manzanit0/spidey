@@ -2,7 +2,7 @@ defmodule Spidey.Storage.UrlStore do
   def init do
     case :ets.info(:urls) do
       :undefined -> :ets.new(:urls, [:set, :public, :named_table])
-      _ -> :already_initialised
+      _ -> :ets.delete_all_objects(:urls)
     end
   end
 
