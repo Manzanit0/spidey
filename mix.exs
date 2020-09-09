@@ -17,7 +17,7 @@ defmodule Spidey.MixProject do
   def application do
     [
       mod: {Spidey.Application, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :poolboy]
     ]
   end
 

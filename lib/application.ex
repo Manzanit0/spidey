@@ -1,10 +1,12 @@
 defmodule Spidey.Application do
   use Application
 
-  def start(_type, _args) do
+  def start(_type, args) do
+    pool_opts = Keyword.take(args, [:filter])
+
     children = [
       {Spidey.Core.Queue, []},
-      :poolboy.child_spec(:crawler_pool, poolboy_config())
+      :poolboy.child_spec(:crawler_pool, poolboy_config(), pool_opts)
     ]
 
     opts = [strategy: :one_for_one, name: Spidey.Supervisor]

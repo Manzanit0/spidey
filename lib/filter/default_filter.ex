@@ -1,12 +1,10 @@
-defmodule Spidey.Core.Filters do
+defmodule Spidey.Filters.DefaultFilter do
+  @behaviour Spidey.Filter
+
   alias Spidey.Core.UrlStore
 
-  @doc """
-  Applies a compound filter of most of the relevant filters in the module to
-  effectively discard already processed urls, invalid urls, static resources.
-  For this it leverages the module `Spidey.Core.UrlStore`.
-  """
-  def filter_relevant_urls(urls, seed) do
+  @impl true
+  def filter_urls(urls, seed: seed) do
     urls
     |> process_relative_urls(seed)
     |> strip_query_params()

@@ -1,7 +1,7 @@
 defmodule Spidey.Core.Worker do
   use GenServer, restart: :transient
 
-  alias Spidey.Core.Filters
+  alias Spidey.Filter
   alias Spidey.Core.UrlStore
   alias Spidey.Core.Queue
   alias Spidey.Core.UrlStore
@@ -9,8 +9,9 @@ defmodule Spidey.Core.Worker do
 
   require Logger
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(opts \\ []) do
+    filter = Keyword.get(opts, :filter, Spidey.Filters.DefaultFilter)
+    GenServer.start_link(__MODULE__, %{filter: filter})
   end
 
   def crawl(pid, url, seed) when is_binary(url) do
@@ -24,10 +25,10 @@ defmodule Spidey.Core.Worker do
   end
 
   @impl true
-  def handle_call({:work, url, seed}, _from, state) do
+  def handle_call({:work, url, seed}, _from, %{filter: filter} = state) do
     url
     |> Content.scan()
-    |> Filters.filter_relevant_urls(seed)
+    |> Filter.filter_urls(filter, seed: seed)
     |> Enum.map(&push_to_stores/1)
 
     {:reply, :ok, state}
