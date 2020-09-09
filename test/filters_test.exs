@@ -1,7 +1,7 @@
 defmodule FiltersTest do
   use ExUnit.Case, async: true
 
-  alias Spidey.Core.Filters
+  alias Spidey.Filter.DefaultFilter
 
   test "reject urls whose domain doesn't match the seed's" do
     seed = "https://monzo.com/"
@@ -14,23 +14,7 @@ defmodule FiltersTest do
       "http://jgarcia.blog"
     ]
 
-    filtered_urls = Filters.reject_non_domain_urls(scanned_urls, seed)
-
-    assert ["http://monzo.com/careers"] == filtered_urls
-  end
-
-  test "reject already scanned urls" do
-    urls = [
-      "http://monzo.com/careers",
-      "http://monzo.com/blog"
-    ]
-
-    scanned_urls = [
-      "http://monzo.com/home",
-      "http://monzo.com/blog"
-    ]
-
-    filtered_urls = Filters.reject_already_scanned_urls(urls, scanned_urls)
+    filtered_urls = DefaultFilter.reject_non_domain_urls(scanned_urls, seed) |> Enum.to_list()
 
     assert ["http://monzo.com/careers"] == filtered_urls
   end
@@ -43,7 +27,8 @@ defmodule FiltersTest do
       "/services"
     ]
 
-    processed_urls = Filters.process_relative_urls(urls, "http://jgarcia.com")
+    processed_urls =
+      DefaultFilter.process_relative_urls(urls, "http://jgarcia.com") |> Enum.to_list()
 
     assert [
              "https://mysomething.url/",
@@ -61,7 +46,8 @@ defmodule FiltersTest do
       "/services"
     ]
 
-    processed_urls = Filters.process_relative_urls(urls, "https://jgarcia.com")
+    processed_urls =
+      DefaultFilter.process_relative_urls(urls, "https://jgarcia.com") |> Enum.to_list()
 
     assert [
              "https://mysomething.url/",
@@ -77,7 +63,7 @@ defmodule FiltersTest do
       "https://jgarcia.com/////"
     ]
 
-    filtered = Filters.strip_trailing_slashes(urls)
+    filtered = DefaultFilter.strip_trailing_slashes(urls) |> Enum.to_list()
 
     assert ["https://jgarcia.com/home/something-else-here", "https://jgarcia.com"] == filtered
   end
@@ -88,7 +74,7 @@ defmodule FiltersTest do
       "https://jgarcia.com?q=foo&hey=ho"
     ]
 
-    filtered = Filters.strip_query_params(urls)
+    filtered = DefaultFilter.strip_query_params(urls) |> Enum.to_list()
 
     assert ["https://jgarcia.com/home/something-else-here", "https://jgarcia.com"] == filtered
   end
