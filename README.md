@@ -35,5 +35,3 @@ if they have Elixir or not.
 
 Spidey provides two main functionalities – crawling a specific domain and
 saving it to a file according to the [plain text site map protocol](https://www.sitemaps.org/protocol.html). For the latter, simply append `--save` to the execution.
-
-
