@@ -1,7 +1,7 @@
-defmodule Spidey.Core.Crawler do
-  alias Spidey.Core.UrlStore
-  alias Spidey.Core.Queue
-  alias Spidey.Core.Worker
+defmodule Spidey.Crawler do
+  alias Spidey.Storage.UrlStore
+  alias Spidey.Storage.Queue
+  alias Spidey.Crawler.Worker
 
   @worker_timeout 60_000
 
@@ -30,7 +30,7 @@ defmodule Spidey.Core.Crawler do
     Task.async(fn ->
       :poolboy.transaction(
         :crawler_pool,
-        fn pid -> Worker.crawl(pid, url, seed) end,
+        fn pid -> Worker.crawl(pid, url, seed, timeout: @worker_timeout) end,
         @worker_timeout
       )
     end)

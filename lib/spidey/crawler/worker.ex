@@ -1,22 +1,22 @@
-defmodule Spidey.Core.Worker do
+defmodule Spidey.Crawler.Worker do
   use GenServer, restart: :transient
 
   alias Spidey.Filter
-  alias Spidey.Core.UrlStore
-  alias Spidey.Core.Queue
-  alias Spidey.Core.UrlStore
-  alias Spidey.Core.Content
+  alias Spidey.Crawler.Content
+  alias Spidey.Storage.Queue
+  alias Spidey.Storage.UrlStore
 
   require Logger
 
   def start_link(opts \\ []) do
-    filter = Keyword.get(opts, :filter, Spidey.Filters.DefaultFilter)
+    filter = Keyword.get(opts, :filter, Spidey.Filter.DefaultFilter)
     GenServer.start_link(__MODULE__, %{filter: filter})
   end
 
-  def crawl(pid, url, seed) when is_binary(url) do
-    Logger.info("crawling url: #{url}")
-    GenServer.call(pid, {:work, url, seed}, 60_000)
+  def crawl(pid, url, seed, opts \\ []) when is_binary(url) do
+    Logger.info("handling url: #{url}")
+    timeout = Keyword.get(opts, :timeout, 60_000)
+    GenServer.call(pid, {:work, url, seed}, timeout)
   end
 
   @impl true

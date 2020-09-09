@@ -1,4 +1,4 @@
-defmodule Spidey.Core.File do
+defmodule Spidey.File do
   def save(urls, path) do
     content = Enum.join(urls, "\n")
 

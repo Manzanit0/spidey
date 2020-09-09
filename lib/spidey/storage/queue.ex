@@ -1,4 +1,4 @@
-defmodule Spidey.Core.Queue do
+defmodule Spidey.Storage.Queue do
   use Agent
 
   def start_link(urls) do
@@ -15,9 +15,6 @@ defmodule Spidey.Core.Queue do
 
   def take(n) do
     queue = Agent.get(__MODULE__, & &1)
-
-    # d = DateTime.utc_now()
-    # IO.inspect("#{d.hour}:#{d.minute}:#{d.second} Queue size pre-take: #{:queue.len(queue)}")
 
     {queue, elems} = pop_multiple(queue, n)
     Agent.update(__MODULE__, fn _ -> queue end)

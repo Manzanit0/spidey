@@ -5,7 +5,7 @@ defmodule Spidey.Application do
     pool_opts = Keyword.take(args, [:filter])
 
     children = [
-      {Spidey.Core.Queue, []},
+      {Spidey.Storage.Queue, []},
       :poolboy.child_spec(:crawler_pool, poolboy_config(), pool_opts)
     ]
 
@@ -16,7 +16,7 @@ defmodule Spidey.Application do
   defp poolboy_config do
     [
       name: {:local, :crawler_pool},
-      worker_module: Spidey.Core.Worker,
+      worker_module: Spidey.Crawler.Worker,
       size: 20,
       max_overflow: 5
     ]

@@ -4,12 +4,11 @@ defmodule Spidey do
   domain and outputs them in a simple text sitemap format.
   """
 
-  alias Spidey.Core.File
+  alias Spidey.File
+  alias Spidey.Crawler
 
   @doc "Crawls a website for all the same-domain urls, returning a list."
-  def crawl(url) when is_binary(url) do
-    Spidey.Core.Crawler.crawl(url)
-  end
+  def crawl(url) when is_binary(url), do: Crawler.crawl(url)
 
   @doc "Crawls a website for all the sam-domain urls and Saves the list of urls to file"
   def crawl_to_file(url, path) when is_binary(url) do

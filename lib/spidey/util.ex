@@ -1,4 +1,4 @@
-defmodule Spidey.Core.Util do
+defmodule Spidey.Util do
   @doc """
   Simple diffing function to time short snippets of code using
   DateTime.utc_now/0.

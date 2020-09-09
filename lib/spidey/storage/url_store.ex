@@ -1,4 +1,4 @@
-defmodule Spidey.Core.UrlStore do
+defmodule Spidey.Storage.UrlStore do
   def init do
     case :ets.info(:urls) do
       :undefined -> :ets.new(:urls, [:set, :public, :named_table])

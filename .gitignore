@@ -26,4 +26,6 @@ spidey-*.tar
 .elixir_ls
 
 spidey
+!spidey/
+
 results.txt

@@ -1,10 +1,10 @@
-defmodule Spidey.Core.ContentBehaviour do
+defmodule Spidey.Crawler.ContentBehaviour do
   @callback parse_links(String.t()) :: [String.t()]
   @callback get!(String.t()) :: String.t()
 end
 
-defmodule Spidey.Core.Content do
-  @behaviour Spidey.Core.ContentBehaviour
+defmodule Spidey.Crawler.Content do
+  @behaviour Spidey.Crawler.ContentBehaviour
 
   def scan(url) when is_binary(url) do
     try do
