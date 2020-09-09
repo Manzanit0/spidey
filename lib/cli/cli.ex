@@ -1,4 +1,4 @@
-defmodule CLI do
+defmodule Spidey.CLI do
   def main(args) do
     args
     |> parse_params()

@@ -10,7 +10,7 @@ defmodule Spidey.MixProject do
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
       test_coverage: [tool: ExCoveralls],
-      escript: [main_module: CLI]
+      escript: [main_module: Spidey.CLI]
     ]
   end
 
