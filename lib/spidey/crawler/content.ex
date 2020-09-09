@@ -35,7 +35,12 @@ defmodule Spidey.Crawler.Content do
   @impl true
   def get!(url) when is_binary(url) do
     url
-    |> HTTPoison.get!([], timeout: 15_000, recv_timeout: 15_000, follow_redirect: true)
+    |> HTTPoison.get!([],
+      timeout: 15_000,
+      recv_timeout: 15_000,
+      follow_redirect: true,
+      hackney: [pool: :default]
+    )
     |> Map.get(:body)
   end
 end
