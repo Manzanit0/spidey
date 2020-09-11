@@ -5,33 +5,35 @@ defmodule Spidey.Crawler do
 
   @worker_timeout 60_000
 
-  def crawl(seed) do
+  def crawl(seed, pool_name) do
     UrlStore.init(seed)
-    Queue.push(seed)
+    Queue.push(seed, pool_name)
 
-    crawl_queue(seed)
+    results = crawl_queue(pool_name, seed)
+
+    results
   end
 
-  defp crawl_queue(seed) do
-    queue_length = Queue.length()
+  defp crawl_queue(pool_name, seed) do
+    queue_length = Queue.length(pool_name)
 
     if queue_length == 0 do
       UrlStore.retrieve_all()
     else
       queue_length
-      |> Queue.take()
-      |> Enum.map(&crawl_via_worker(&1, seed))
+      |> Queue.take(pool_name)
+      |> Enum.map(&run_in_pool(&1, pool_name, seed))
       |> Enum.map(&Task.await(&1, @worker_timeout))
 
-      crawl_queue(seed)
+      crawl_queue(pool_name, seed)
     end
   end
 
-  defp crawl_via_worker(url, seed) do
+  defp run_in_pool(url, pool_name, seed) do
     Task.async(fn ->
       :poolboy.transaction(
-        :crawler_pool,
-        fn pid -> Worker.crawl(pid, url, seed, timeout: @worker_timeout) end,
+        pool_name,
+        fn pid -> Worker.crawl(pid, url, pool_name, seed, timeout: @worker_timeout) end,
         @worker_timeout
       )
     end)

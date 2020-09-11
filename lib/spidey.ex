@@ -6,14 +6,33 @@ defmodule Spidey do
 
   alias Spidey.File
   alias Spidey.Crawler
+  alias Spidey.PoolManager
 
-  @doc "Crawls a website for all the same-domain urls, returning a list."
-  def crawl(url) when is_binary(url), do: Crawler.crawl(url)
+  @doc """
+  Crawls a website for all the same-domain urls, returning a list.
+
+  iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyCustomFilter, pool_size: 15)
+  [
+    "https://https://manzanit0.github.io/foo",
+    "https://https://manzanit0.github.io/bar-baz/#",
+    ...
+  ]
+  """
+  def crawl(url, pool_name \\ :default, opts \\ []) when is_binary(url) and is_atom(pool_name) do
+    PoolManager.start_child(pool_name, opts)
+
+    try do
+      Crawler.crawl(url, pool_name)
+    after
+      PoolManager.terminate_child(pool_name)
+    end
+  end
 
   @doc "Crawls a website for all the sam-domain urls and Saves the list of urls to file"
-  def crawl_to_file(url, path) when is_binary(url) do
+  def crawl_to_file(url, pool_name \\ :default, path)
+      when is_binary(url) and is_atom(pool_name) do
     url
-    |> crawl()
+    |> crawl(pool_name)
     |> File.save(path)
   end
 end

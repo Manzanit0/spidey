@@ -1,28 +1,35 @@
 defmodule Spidey.Storage.Queue do
   use Agent
 
-  def start_link(urls) do
+  def start_link(urls, pool_name) do
     queue = :queue.from_list(urls)
-    Agent.start_link(fn -> queue end, name: __MODULE__)
+    Agent.start_link(fn -> queue end, name: queue_name(pool_name))
   end
 
-  def pop do
-    queue = Agent.get(__MODULE__, & &1)
+  def child_spec(pool_name, urls \\ []) do
+    %{
+      id: queue_name(pool_name),
+      start: {Spidey.Storage.Queue, :start_link, [urls, pool_name]}
+    }
+  end
+
+  def pop(pool_name) do
+    queue = Agent.get(queue_name(pool_name), & &1)
     {value, queue} = pop_value(queue)
-    Agent.update(__MODULE__, fn _ -> queue end)
+    Agent.update(pool_name, fn _ -> queue end)
     value
   end
 
-  def take(n) do
-    queue = Agent.get(__MODULE__, & &1)
+  def take(n, pool_name) do
+    queue = Agent.get(queue_name(pool_name), & &1)
 
     {queue, elems} = pop_multiple(queue, n)
-    Agent.update(__MODULE__, fn _ -> queue end)
+    Agent.update(queue_name(pool_name), fn _ -> queue end)
     elems
   end
 
-  def push(url) do
-    Agent.update(__MODULE__, &:queue.in(url, &1))
+  def push(url, pool_name) do
+    Agent.update(queue_name(pool_name), &:queue.in(url, &1))
   end
 
   defp pop_value(queue) do
@@ -43,8 +50,10 @@ defmodule Spidey.Storage.Queue do
     end
   end
 
-  def length do
-    queue = Agent.get(__MODULE__, & &1)
+  def length(pool_name) do
+    queue = Agent.get(queue_name(pool_name), & &1)
     :queue.len(queue)
   end
+
+  defp queue_name(pool_name), do: :"#{pool_name}Queue"
 end
