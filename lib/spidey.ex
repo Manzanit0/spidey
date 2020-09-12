@@ -1,8 +1,9 @@
 defmodule Spidey do
-  @moduledoc """
-  Spidey is a basic web crawler which runs through all the links of a same
-  domain and outputs them in a simple text sitemap format.
-  """
+  @external_resource "README.md"
+  @moduledoc "README.md"
+             |> File.read!()
+             |> String.split("<!-- MDOC !-->")
+             |> Enum.fetch!(1)
 
   alias Spidey.File
   alias Spidey.Crawler
