@@ -1,4 +1,4 @@
-defmodule Spidey.PoolManager do
+defmodule Spidey.Crawler.PoolManager do
   @moduledoc """
   PoolManager is in charge of spinning up the pools and queues to crawl new
   websites. Every time a new website is to be crawled, a pool is created,
@@ -6,6 +6,8 @@ defmodule Spidey.PoolManager do
   """
 
   use DynamicSupervisor
+
+  alias Spidey.Crawler.PoolSupervisor
 
   @doc "Starts the supervisor."
   def start_link(_) do
@@ -19,7 +21,7 @@ defmodule Spidey.PoolManager do
         {:error, :already_exists}
 
       [] ->
-        child_spec = Spidey.PoolSupervisor.child_spec(pool_name, opts)
+        child_spec = PoolSupervisor.child_spec(pool_name, opts)
         DynamicSupervisor.start_child(__MODULE__, child_spec)
     end
   end

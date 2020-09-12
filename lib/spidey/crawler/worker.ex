@@ -2,14 +2,12 @@ defmodule Spidey.Crawler.Worker do
   use GenServer, restart: :transient
 
   alias Spidey.Filter
-  alias Spidey.Crawler.Content
-  alias Spidey.Storage.Queue
-  alias Spidey.Storage.UrlStore
+  alias Spidey.Crawler.{Content, Queue, UrlStore}
 
   require Logger
 
   def start_link(opts \\ []) do
-    filter = Keyword.get(opts, :filter, Spidey.Filter.DefaultFilter)
+    filter = Keyword.get(opts, :filter, Filter.DefaultFilter)
     GenServer.start_link(__MODULE__, %{filter: filter})
   end
 

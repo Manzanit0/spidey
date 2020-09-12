@@ -1,5 +1,7 @@
-defmodule Spidey.PoolSupervisor do
+defmodule Spidey.Crawler.PoolSupervisor do
   use Supervisor
+
+  alias Spidey.Crawler.{PoolSupervisor, Worker, Queue}
 
   def start_link(pool_name, opts) do
     Supervisor.start_link(__MODULE__, %{pool_name: pool_name, opts: opts},
@@ -10,7 +12,7 @@ defmodule Spidey.PoolSupervisor do
   def child_spec(pool_name, opts) do
     %{
       id: :"#{pool_name}Supervisor",
-      start: {Spidey.PoolSupervisor, :start_link, [pool_name, opts]}
+      start: {PoolSupervisor, :start_link, [pool_name, opts]}
     }
   end
 
@@ -23,14 +25,14 @@ defmodule Spidey.PoolSupervisor do
 
     config = [
       name: {:local, pool_name},
-      worker_module: Spidey.Crawler.Worker,
+      worker_module: Worker,
       size: pool_size,
       max_overflow: max_overflow
     ]
 
     children = [
       :poolboy.child_spec(pool_name, config, worker_opts),
-      Spidey.Storage.Queue.child_spec(pool_name)
+      Queue.child_spec(pool_name)
     ]
 
     Registry.register(Spidey.Registry, pool_name, %{pid: self()})

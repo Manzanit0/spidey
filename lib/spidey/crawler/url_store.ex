@@ -1,4 +1,4 @@
-defmodule Spidey.Storage.UrlStore do
+defmodule Spidey.Crawler.UrlStore do
   def init(seed) do
     case :ets.info(:urls) do
       :undefined -> :ets.new(:urls, [:set, :public, :named_table])

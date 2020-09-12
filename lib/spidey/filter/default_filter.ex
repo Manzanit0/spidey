@@ -1,7 +1,7 @@
 defmodule Spidey.Filter.DefaultFilter do
   @behaviour Spidey.Filter
 
-  alias Spidey.Storage.UrlStore
+  alias Spidey.Crawler.UrlStore
 
   @impl true
   def filter_urls(urls, seed: seed) do

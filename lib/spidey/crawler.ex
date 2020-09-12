@@ -1,17 +1,19 @@
 defmodule Spidey.Crawler do
-  alias Spidey.Storage.UrlStore
-  alias Spidey.Storage.Queue
-  alias Spidey.Crawler.Worker
+  alias Spidey.Crawler.{PoolManager, UrlStore, Queue, Worker}
 
   @worker_timeout 60_000
 
-  def crawl(seed, pool_name) do
-    UrlStore.init(seed)
-    Queue.push(seed, pool_name)
+  def crawl(seed, pool_name, opts) do
+    PoolManager.start_child(pool_name, opts)
 
-    results = crawl_queue(pool_name, seed)
+    try do
+      UrlStore.init(seed)
+      Queue.push(seed, pool_name)
 
-    results
+      crawl_queue(pool_name, seed)
+    after
+      PoolManager.terminate_child(pool_name)
+    end
   end
 
   defp crawl_queue(pool_name, seed) do

@@ -3,7 +3,7 @@ defmodule Spidey.Application do
 
   def start(_type, _args) do
     children = [
-      {Spidey.PoolManager, []},
+      {Spidey.Crawler.PoolManager, []},
       {Registry, keys: :unique, name: Spidey.Registry}
     ]
 

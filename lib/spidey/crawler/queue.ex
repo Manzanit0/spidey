@@ -1,5 +1,7 @@
-defmodule Spidey.Storage.Queue do
+defmodule Spidey.Crawler.Queue do
   use Agent
+
+  alias __MODULE__
 
   def start_link(urls, pool_name) do
     queue = :queue.from_list(urls)
@@ -9,7 +11,7 @@ defmodule Spidey.Storage.Queue do
   def child_spec(pool_name, urls \\ []) do
     %{
       id: queue_name(pool_name),
-      start: {Spidey.Storage.Queue, :start_link, [urls, pool_name]}
+      start: {Queue, :start_link, [urls, pool_name]}
     }
   end
 

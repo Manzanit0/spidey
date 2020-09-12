@@ -6,7 +6,6 @@ defmodule Spidey do
 
   alias Spidey.File
   alias Spidey.Crawler
-  alias Spidey.PoolManager
 
   @doc """
   Crawls a website for all the same-domain urls, returning a list.
@@ -19,13 +18,7 @@ defmodule Spidey do
   ]
   """
   def crawl(url, pool_name \\ :default, opts \\ []) when is_binary(url) and is_atom(pool_name) do
-    PoolManager.start_child(pool_name, opts)
-
-    try do
-      Crawler.crawl(url, pool_name)
-    after
-      PoolManager.terminate_child(pool_name)
-    end
+    Crawler.crawl(url, pool_name, opts)
   end
 
   @doc "Crawls a website for all the sam-domain urls and Saves the list of urls to file"
