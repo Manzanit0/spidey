@@ -2,7 +2,6 @@ defmodule CrawlerTest do
   use ExUnit.Case, async: true
 
   alias Spidey.Crawler.Content
-  alias Spidey.Crawler
 
   import Mox
 
@@ -11,7 +10,7 @@ defmodule CrawlerTest do
     Application.get_env(:spidey, :content)
     |> expect(:get!, fn _ -> raise HTTPoison.Error end)
 
-    results = Crawler.crawl("wrong-url.com")
+    results = Spidey.crawl("wrong-url.com")
 
     assert ["wrong-url.com"] == results
   end
@@ -53,7 +52,7 @@ defmodule CrawlerTest do
     |> expect(:get!, fn "https://depth.com/3" -> html1 end)
     |> expect(:parse_links, 4, &Content.parse_links/1)
 
-    results = Crawler.crawl("https://depth.com")
+    results = Spidey.crawl("https://depth.com")
 
     assert [
              "https://depth.com/3",
