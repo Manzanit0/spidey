@@ -2,23 +2,23 @@
 
 [![Build Status](https://travis-ci.org/Manzanit0/spidey.svg?branch=master)](https://travis-ci.org/Manzanit0/spidey)
 
+![Terminal output example](/terminal_output.png)
+
 <!-- MDOC !-->
 
-Spidey is a fast, dead-simple and concurrent web crawler which focuses on ease of use and speed.
-
-![Terminal output example](/terminal_output.png)
+A dead-simple, concurrent web crawler which focuses on ease of use and speed.
 
 ## Usage
 
 Spidey has been thought with ease of usage in mind, so all you have to do to get started is:
 
 ```elixir
-  iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, pool_size: 15)
-  [
-    "https://https://manzanit0.github.io/foo",
-    "https://https://manzanit0.github.io/bar-baz/#",
-    ...
-  ]
+iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, pool_size: 15)
+[
+  "https://https://manzanit0.github.io/foo",
+  "https://https://manzanit0.github.io/bar-baz/#",
+  ...
+]
 ```
 
 In a nutshell, the above line will:
@@ -60,7 +60,7 @@ Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyApp.RssFilt
 It's encouraged to use the `Stream` module instead of the `Enum` since the
 code that handles the filtering uses streams.
 
-## 🛠 using the CLI
+## Using the CLI
 
 To be able to run the application make sure to have Elixir installed.
 Please check the official instructions: [link](https://elixir-lang.org/install.html)
@@ -93,10 +93,12 @@ saving it to a file according to the [plain text site map protocol](https://www.
 
 The package can be installed by adding spidey to your list of dependencies in mix.exs:
 
+```elixir
 def deps do
   [
     {:spidey, "~> 0.2"}
   ]
 end
+```
 
 The docs can be found at https://hexdocs.pm/spidey

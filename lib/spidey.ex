@@ -11,12 +11,10 @@ defmodule Spidey do
   @doc """
   Crawls a website for all the same-domain urls, returning a list.
 
-  iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyCustomFilter, pool_size: 15)
-  [
-    "https://https://manzanit0.github.io/foo",
-    "https://https://manzanit0.github.io/bar-baz/#",
-    ...
-  ]
+  ## Examples
+
+      iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyCustomFilter, pool_size: 15)
+      ["https://https://manzanit0.github.io/foo", "https://https://manzanit0.github.io/bar-baz/#", ...]
   """
   def crawl(url, pool_name \\ :default, opts \\ []) when is_binary(url) and is_atom(pool_name) do
     Crawler.crawl(url, pool_name, opts)

@@ -10,7 +10,8 @@ defmodule Spidey.MixProject do
       app: :spidey,
       name: @name,
       source_url: @repo_url,
-      description: "A dead-simple crawler",
+      description:
+        "A dead-simple, concurrent web crawler which focuses on ease of use and speed.",
       package: package(),
       docs: docs(),
       version: @version,
