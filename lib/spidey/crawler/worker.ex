@@ -27,13 +27,14 @@ defmodule Spidey.Crawler.Worker do
     url
     |> Content.scan()
     |> Filter.filter_urls(filter, seed: seed)
-    |> Enum.map(&push_to_stores(&1, pool_name))
+    |> Stream.reject(&UrlStore.exists?(&1, pool_name))
+    |> Enum.each(&push_to_stores(&1, pool_name))
 
     {:reply, :ok, state}
   end
 
   defp push_to_stores(url, pool_name) do
     Queue.push(url, pool_name)
-    UrlStore.add(url)
+    UrlStore.add(url, pool_name)
   end
 end

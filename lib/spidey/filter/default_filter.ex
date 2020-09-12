@@ -1,19 +1,15 @@
 defmodule Spidey.Filter.DefaultFilter do
   @behaviour Spidey.Filter
 
-  alias Spidey.Crawler.UrlStore
-
   @impl true
   def filter_urls(urls, seed: seed) do
     urls
     |> process_relative_urls(seed)
     |> strip_query_params()
     |> strip_trailing_slashes()
-    |> Stream.reject(&UrlStore.exists?/1)
     |> reject_non_domain_urls(seed)
     |> reject_invalid_urls()
     |> reject_static_resources()
-    |> Stream.uniq()
   end
 
   def strip_query_params(urls) do

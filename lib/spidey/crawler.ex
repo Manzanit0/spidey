@@ -7,7 +7,7 @@ defmodule Spidey.Crawler do
     PoolManager.start_child(pool_name, opts)
 
     try do
-      UrlStore.init(seed)
+      UrlStore.init(seed, pool_name)
       Queue.push(seed, pool_name)
 
       crawl_queue(pool_name, seed)
@@ -20,7 +20,7 @@ defmodule Spidey.Crawler do
     queue_length = Queue.length(pool_name)
 
     if queue_length == 0 do
-      UrlStore.retrieve_all()
+      UrlStore.retrieve_all(pool_name)
     else
       queue_length
       |> Queue.take(pool_name)
