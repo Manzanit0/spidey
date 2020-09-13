@@ -1,7 +1,5 @@
 # Spidey
 
-[![Build Status](https://travis-ci.org/Manzanit0/spidey.svg?branch=master)](https://travis-ci.org/Manzanit0/spidey)
-
 <!-- MDOC !-->
 
 A dead-simple, concurrent web crawler which focuses on ease of use and speed.
