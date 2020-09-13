@@ -19,9 +19,9 @@ defmodule Spidey do
 
   Furthermore, `crawl/3` accepts the following options:
 
-      * `filter`: a custom url filter
-      * `pool_size`: the amount of workers to crawl the website. Defaults to 20.
-      * `max_overflow`: the amount of workers to overflow before queueing urls. Defaults to 5.
+    * `filter`: a custom url filter
+    * `pool_size`: the amount of workers to crawl the website. Defaults to 20.
+    * `max_overflow`: the amount of workers to overflow before queueing urls. Defaults to 5.
 
   ## Examples
 
