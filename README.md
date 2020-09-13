@@ -45,7 +45,6 @@ defmodule MyApp.RssFilter do
     |> Stream.reject(&String.ends_with?(&1, "feed/"))
     |> Stream.reject(&String.ends_with?(&1, "feed"))
   end
-
  end
 ```
 

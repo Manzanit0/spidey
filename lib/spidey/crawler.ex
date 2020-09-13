@@ -4,15 +4,15 @@ defmodule Spidey.Crawler do
   @worker_timeout 60_000
 
   def crawl(seed, pool_name, opts) do
-    PoolManager.start_child(pool_name, opts)
-
     try do
-      UrlStore.init(seed, pool_name)
-      Queue.push(seed, pool_name)
+      PoolManager.start_child(pool_name, opts)
+      UrlStore.init!(seed, pool_name)
 
+      Queue.push(seed, pool_name)
       crawl_queue(pool_name, seed)
     after
       PoolManager.terminate_child(pool_name)
+      UrlStore.teardown(pool_name)
     end
   end
 
