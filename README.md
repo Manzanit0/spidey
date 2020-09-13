@@ -21,10 +21,11 @@ iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, pool_size: 15)
 
 In a nutshell, the above line will:
 
-1. Spin up a new supervision tree under the `Spidey` OTP application that will contain a pool of workers for crawling.
+1. Spin up a new supervision tree under the `Spidey` OTP Application that will contain a pool of workers for crawling.
 2. Create an ETS table to store crawled urls
 3. Crawl the website
-4. Teardown the supervision tree
+4. Return all the urls as a list
+5. Teardown the supervision tree and the ETS table
 
 The function is synchronous, but if you were to call it asynchronously
 multiple times, each invocation will spin up a new supervision trees with a
