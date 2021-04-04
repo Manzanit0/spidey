@@ -16,18 +16,11 @@ defmodule Spidey.Crawler.Queue do
   end
 
   def pop(pool_name) do
-    queue = Agent.get(queue_name(pool_name), & &1)
-    {value, queue} = pop_value(queue)
-    Agent.update(pool_name, fn _ -> queue end)
-    value
+    Agent.get_and_update(queue_name(pool_name), &pop_value/1)
   end
 
   def take(n, pool_name) do
-    queue = Agent.get(queue_name(pool_name), & &1)
-
-    {queue, elems} = pop_multiple(queue, n)
-    Agent.update(queue_name(pool_name), fn _ -> queue end)
-    elems
+    Agent.get_and_update(queue_name(pool_name), &pop_multiple(&1, n))
   end
 
   def push(url, pool_name) do
@@ -43,12 +36,12 @@ defmodule Spidey.Crawler.Queue do
 
   defp pop_multiple(queue, n, elems \\ [])
 
-  defp pop_multiple(queue, 0, elems), do: {queue, elems}
+  defp pop_multiple(queue, 0, elems), do: {elems, queue}
 
   defp pop_multiple(queue, n, elems) do
     case :queue.out(queue) do
       {{:value, value}, queue} -> pop_multiple(queue, n - 1, [value | elems])
-      {:empty, queue} -> {queue, elems}
+      {:empty, queue} -> {elems, queue}
     end
   end
 
