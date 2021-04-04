@@ -28,7 +28,7 @@ defmodule Spidey.Crawler do
       queue_length
       |> Queue.take(pool_name)
       |> Enum.map(&run_in_pool(&1, pool_name, seed))
-      |> Enum.map(&Task.await(&1, @worker_timeout))
+      |> Task.await_many(@worker_timeout)
 
       crawl_queue(pool_name, seed)
     end
@@ -38,7 +38,7 @@ defmodule Spidey.Crawler do
     Task.async(fn ->
       :poolboy.transaction(
         pool_name,
-        fn pid -> Worker.crawl(pid, url, pool_name, seed, timeout: @worker_timeout) end,
+        fn pid -> Worker.crawl(pid, url, pool_name, seed, timeout: @worker_timeout - 5000) end,
         @worker_timeout
       )
     end)
