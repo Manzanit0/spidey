@@ -1,16 +1,19 @@
 defmodule Spidey.Crawler do
+  require Logger
   alias Spidey.Crawler.{PoolManager, UrlStore, Queue, Worker}
 
   @worker_timeout 60_000
 
   def crawl(seed, pool_name, opts) do
     try do
+      Logger.info("starting pool and ETS table #{pool_name}")
       PoolManager.start_child(pool_name, opts)
       UrlStore.init!(seed, pool_name)
 
       Queue.push(seed, pool_name)
       crawl_queue(pool_name, seed)
     after
+      Logger.info("terminating pool and ETS table #{pool_name}")
       PoolManager.terminate_child(pool_name)
       UrlStore.teardown(pool_name)
     end

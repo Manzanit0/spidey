@@ -7,6 +7,8 @@ defmodule Spidey.Crawler.Worker do
   require Logger
 
   def start_link(opts \\ []) do
+    Logger.info("starting worker process")
+
     filter = Keyword.get(opts, :filter, Filter.DefaultFilter)
     GenServer.start_link(__MODULE__, %{filter: filter})
   end
@@ -31,6 +33,11 @@ defmodule Spidey.Crawler.Worker do
     |> Enum.each(&push_to_stores(&1, pool_name))
 
     {:reply, :ok, state}
+  end
+
+  @impl true
+  def terminate(reason, _state) do
+    Logger.error("worker terminated due to #{inspect(reason)}")
   end
 
   defp push_to_stores(url, pool_name) do

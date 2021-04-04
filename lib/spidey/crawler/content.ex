@@ -4,6 +4,8 @@ defmodule Spidey.Crawler.ContentBehaviour do
 end
 
 defmodule Spidey.Crawler.Content do
+  require Logger
+
   @behaviour Spidey.Crawler.ContentBehaviour
 
   def scan(url) when is_binary(url) do
@@ -14,12 +16,12 @@ defmodule Spidey.Crawler.Content do
     rescue
       # Timeout, wrong url, etc.
       e in HTTPoison.Error ->
-        IO.inspect(e, label: :url_scan_error)
+        Logger.warn("error fetching content: #{e.reason}")
         []
 
       # non-html format
-      e in CaseClauseError ->
-        IO.inspect(e, label: :url_scan_error)
+      CaseClauseError ->
+        Logger.warn("error parsing content: CaseClauseError")
         []
     end
   end
