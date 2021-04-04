@@ -3,18 +3,17 @@ defmodule Spidey.Crawler.Worker do
 
   alias Spidey.Filter
   alias Spidey.Crawler.{Content, Queue, UrlStore}
-
-  require Logger
+  alias Spidey.Logger
 
   def start_link(opts \\ []) do
-    Logger.info("starting worker process")
+    Logger.log("starting worker process")
 
     filter = Keyword.get(opts, :filter, Filter.DefaultFilter)
     GenServer.start_link(__MODULE__, %{filter: filter})
   end
 
   def crawl(pid, url, pool_name, seed, opts \\ []) when is_binary(url) do
-    Logger.info("pool #{pool_name} handling url: #{url}")
+    Logger.log("pool #{pool_name} handling url: #{url}")
     timeout = Keyword.get(opts, :timeout, 60_000)
     GenServer.call(pid, {:work, url, pool_name, seed}, timeout)
   end
@@ -37,7 +36,7 @@ defmodule Spidey.Crawler.Worker do
 
   @impl true
   def terminate(reason, _state) do
-    Logger.error("worker terminated due to #{inspect(reason)}")
+    Logger.log("worker terminated due to #{inspect(reason)}")
   end
 
   defp push_to_stores(url, pool_name) do

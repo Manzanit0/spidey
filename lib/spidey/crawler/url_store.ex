@@ -1,6 +1,4 @@
 defmodule Spidey.Crawler.UrlStore do
-  require Logger
-
   def init!(seed, pool_name) do
     if table_exists?(pool_name) do
       raise "ETS table with name #{table_name(pool_name)} already exists."

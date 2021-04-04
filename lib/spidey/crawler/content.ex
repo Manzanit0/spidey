@@ -4,7 +4,7 @@ defmodule Spidey.Crawler.ContentBehaviour do
 end
 
 defmodule Spidey.Crawler.Content do
-  require Logger
+  alias Spidey.Logger
 
   @behaviour Spidey.Crawler.ContentBehaviour
 
@@ -16,12 +16,12 @@ defmodule Spidey.Crawler.Content do
     rescue
       # Timeout, wrong url, etc.
       e in HTTPoison.Error ->
-        Logger.warn("error fetching content: #{e.reason}")
+        Logger.log("error fetching content: #{e.reason}")
         []
 
       # non-html format
       CaseClauseError ->
-        Logger.warn("error parsing content: CaseClauseError")
+        Logger.log("error parsing content: CaseClauseError")
         []
     end
   end

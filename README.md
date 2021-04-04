@@ -56,6 +56,17 @@ Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyApp.RssFilt
 It's encouraged to use the `Stream` module instead of the `Enum` since the
 code that handles the filtering uses streams.
 
+## Configuration
+
+Currently Spidey supports the following configuration:
+
+- `:log` - the log level used when logging events with Elixir's
+  Logger. If false, disables logging. Defaults to `:debug`
+
+```elixir
+config :spidey, log: :info
+```
+
 ## Using the CLI
 
 To be able to run the application make sure to have Elixir installed.
