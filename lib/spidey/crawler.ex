@@ -3,6 +3,19 @@ defmodule Spidey.Crawler do
   alias Spidey.Filter
   alias Spidey.Crawler.{UrlStore, Queue, Content}
 
+  @typedoc """
+  The options passed to `Spidey.Crawler.crawl/3`. Currently only allows the
+  specification of the filter to apply to crawled URLs, uses
+  `Spidey.Filter.DefaultFilter` by default.
+  """
+  @type crawl_options :: [filter: module()]
+
+  @doc """
+  Crawls a given url synchronously through a supervision tree under the name of
+  `pool_name`. It accepts the filter to apply to crawled urls through the
+  `filter` option.
+  """
+  @spec crawl(String.t(), atom(), crawl_options()) :: [String.t()]
   def crawl(seed, pool_name, opts) do
     filter = Keyword.get(opts, :filter, Spidey.Filter.DefaultFilter)
 

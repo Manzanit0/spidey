@@ -18,21 +18,20 @@ defmodule Spidey do
   provide it via the `filter` option.
 
   Furthermore, `crawl/3` accepts the following options:
-
     * `filter`: a custom url filter
-    * `pool_size`: the amount of workers to crawl the website. Defaults to 20.
-    * `max_overflow`: the amount of workers to overflow before queueing urls. Defaults to 5.
 
   ## Examples
 
       iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyCustomFilter, pool_size: 15)
       ["https://https://manzanit0.github.io/foo", "https://https://manzanit0.github.io/bar-baz/#", ...]
   """
+  @spec crawl(String.t(), atom(), Crawler.crawl_options()) :: [String.t()]
   def crawl(url, pool_name \\ :default, opts \\ []) when is_binary(url) and is_atom(pool_name) do
     Crawler.crawl(url, pool_name, opts)
   end
 
   @doc "Just like `crawl/3` but saves the list of urls to file"
+  @spec crawl_to_file(String.t(), String.t(), atom(), Crawler.crawl_options()) :: any()
   def crawl_to_file(url, path, pool_name \\ :default, opts \\ [])
       when is_binary(url) and is_atom(pool_name) do
     url
