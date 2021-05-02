@@ -15,7 +15,7 @@ defmodule Spidey.MixProject do
       package: package(),
       docs: docs(),
       version: @version,
-      elixir: "~> 1.11",
+      elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -33,12 +33,11 @@ defmodule Spidey.MixProject do
 
   defp deps do
     [
-      {:httpoison, "~> 1.7.0"},
+      {:httpoison, "~> 1.8.0"},
       {:floki, "~> 0.27.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mox, "~> 0.5", only: :test},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:poolboy, "~> 1.5"}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 

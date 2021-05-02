@@ -2,10 +2,7 @@ defmodule Spidey.Application do
   use Application
 
   def start(_type, _args) do
-    children = [
-      {Spidey.Crawler.PoolManager, []},
-      {Registry, keys: :unique, name: Spidey.Registry}
-    ]
+    children = []
 
     opts = [strategy: :one_for_one, name: Spidey.Supervisor]
     Supervisor.start_link(children, opts)

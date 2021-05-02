@@ -11,7 +11,7 @@ defmodule Spidey do
   @doc """
   Crawls a website for all the same-domain urls, returning a list with them.
 
-  The defauilt `pool_name` is `:default`, but a custom one can be provided.
+  The default `pool_name` is `:default`, but a custom one can be provided.
 
   The default filter rejects assets, Wordpress links, and others. To provide
   custom filtering make sure to implement the `Spidey.Filter` behaviour and
