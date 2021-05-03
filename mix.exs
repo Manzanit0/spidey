@@ -2,7 +2,7 @@ defmodule Spidey.MixProject do
   use Mix.Project
 
   @name "Spidey"
-  @version "0.3.0"
+  @version "0.3.1"
   @repo_url "https://github.com/manzanit0/spidey"
 
   def project do
@@ -27,7 +27,7 @@ defmodule Spidey.MixProject do
   def application do
     [
       mod: {Spidey.Application, []},
-      extra_applications: [:logger, :poolboy]
+      extra_applications: [:logger]
     ]
   end
 

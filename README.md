@@ -4,12 +4,28 @@
 
 A dead-simple, concurrent web crawler which focuses on ease of use and speed.
 
-## Usage
+## Installation
 
-Spidey has been thought with ease of usage in mind, so all you have to do to get started is:
+The package can be installed by adding spidey to your list of dependencies in
+mix.exs:
 
 ```elixir
-iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, pool_size: 15)
+def deps do
+  [
+    {:spidey, "~> 0.3"}
+  ]
+end
+```
+
+The docs can be found at https://hexdocs.pm/spidey
+
+## Usage
+
+Spidey has been thought with ease of usage in mind, so all you have to do to get
+started is:
+
+```elixir
+iex> Spidey.crawl("https://manzanit0.github.io", :crawler_name, pool_size: 15)
 [
   "https://https://manzanit0.github.io/foo",
   "https://https://manzanit0.github.io/bar-baz/#",
@@ -19,15 +35,23 @@ iex> Spidey.crawl("https://manzanit0.github.io", :crawler_pool, pool_size: 15)
 
 In a nutshell, the above line will:
 
-1. Spin up a new supervision tree under the `Spidey` OTP Application that will supervise a task supervisor and the queue of URLs.
+1. Spin up a new supervision tree under the `Spidey` OTP Application that will
+   supervise a task supervisor and the queue of URLs.
 2. Create an ETS table to store crawled urls
 3. Crawl the website
 4. Return all the urls as a list
 5. Teardown the supervision tree and the ETS table
 
-The function is synchronous, but if you were to call it asynchronously
+The function is blocking, but if you were to call it asynchronously
 multiple times, each invocation will spin up a new supervision trees with a
-new pool and its set of workers.
+new task supervisor and a new queue.
+
+### But why is it blocking?
+
+The reason why it has been made blocking instead of non-blocking is because
+there are already multiple libraries which do async crawling out there... and I
+needed one that was blocking which allowed me to decide when to run it
+synchronously and when not to.
 
 ### Specifying your own filter
 
@@ -50,11 +74,11 @@ defmodule MyApp.RssFilter do
 And simply pass it down to the crawler as an option:
 
 ```elixir
-Spidey.crawl("https://manzanit0.github.io", :crawler_pool, filter: MyApp.RssFilter)
+Spidey.crawl("https://manzanit0.github.io", :crawler_name, filter: MyApp.RssFilter)
 ```
 
-It's encouraged to use the `Stream` module instead of the `Enum` since the
-code that handles the filtering uses streams.
+It's encouraged to use the `Stream` module instead of the `Enum` since the code
+that handles the filtering uses streams.
 
 ## Configuration
 
@@ -69,8 +93,8 @@ config :spidey, log: :info
 
 ## Using the CLI
 
-To be able to run the application make sure to have Elixir installed.
-Please check the official instructions: [link](https://elixir-lang.org/install.html)
+To be able to run the application make sure to have Elixir installed. Please
+check the official instructions: [link](https://elixir-lang.org/install.html)
 
 Once you have Elixir installed, to set up the application run:
 
@@ -93,19 +117,6 @@ if they have Elixir or not.
 
 ### CLI options
 
-Spidey provides two main functionalities – crawling a specific domain and
-saving it to a file according to the [plain text site map protocol](https://www.sitemaps.org/protocol.html). For the latter, simply append `--save` to the execution.
-
-## Installation
-
-The package can be installed by adding spidey to your list of dependencies in mix.exs:
-
-```elixir
-def deps do
-  [
-    {:spidey, "~> 0.3"}
-  ]
-end
-```
-
-The docs can be found at https://hexdocs.pm/spidey
+Spidey provides two main functionalities – crawling a specific domain and saving
+it to a file according to the [plain text site map protocol](https://www.sitemaps.org/protocol.html).
+For the latter, simply append `--save` to the execution.

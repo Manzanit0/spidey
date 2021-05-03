@@ -5,6 +5,7 @@ defmodule Spidey.Logger do
 
   require Logger
 
+  @spec log(String.t()) :: :ok
   def log(message) do
     default_level = :debug
 

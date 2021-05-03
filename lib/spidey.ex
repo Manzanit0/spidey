@@ -11,7 +11,7 @@ defmodule Spidey do
   @doc """
   Crawls a website for all the same-domain urls, returning a list with them.
 
-  The default `pool_name` is `:default`, but a custom one can be provided.
+  The default `crawler_name` is `:default`, but a custom one can be provided.
 
   The default filter rejects assets, Wordpress links, and others. To provide
   custom filtering make sure to implement the `Spidey.Filter` behaviour and
@@ -26,16 +26,18 @@ defmodule Spidey do
       ["https://https://manzanit0.github.io/foo", "https://https://manzanit0.github.io/bar-baz/#", ...]
   """
   @spec crawl(String.t(), atom(), Crawler.crawl_options()) :: [String.t()]
-  def crawl(url, pool_name \\ :default, opts \\ []) when is_binary(url) and is_atom(pool_name) do
-    Crawler.crawl(url, pool_name, opts)
+  def crawl(url, crawler_name \\ :default, opts \\ [])
+      when is_binary(url) and is_atom(crawler_name) do
+    Crawler.crawl(url, crawler_name, opts)
   end
 
   @doc "Just like `crawl/3` but saves the list of urls to file"
-  @spec crawl_to_file(String.t(), String.t(), atom(), Crawler.crawl_options()) :: any()
-  def crawl_to_file(url, path, pool_name \\ :default, opts \\ [])
-      when is_binary(url) and is_atom(pool_name) do
+  @spec crawl_to_file(String.t(), String.t(), atom(), Crawler.crawl_options()) ::
+          :ok | {:error, any()}
+  def crawl_to_file(url, path, crawler_name \\ :default, opts \\ [])
+      when is_binary(url) and is_atom(crawler_name) do
     url
-    |> crawl(pool_name, opts)
+    |> crawl(crawler_name, opts)
     |> File.save(path)
   end
 end

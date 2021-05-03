@@ -1,34 +1,34 @@
 defmodule Spidey.Crawler.UrlStore do
-  def init!(seed, pool_name) do
-    if table_exists?(pool_name) do
-      raise "ETS table with name #{table_name(pool_name)} already exists."
+  def init!(seed, name) do
+    if table_exists?(name) do
+      raise "ETS table with name #{table_name(name)} already exists."
     end
 
-    :ets.new(table_name(pool_name), [:set, :public, :named_table])
-    add(seed, pool_name)
+    :ets.new(table_name(name), [:set, :public, :named_table])
+    add(seed, name)
   end
 
-  def teardown(pool_name) do
-    with true <- table_exists?(pool_name) do
-      :ets.delete(table_name(pool_name))
+  def teardown(name) do
+    with true <- table_exists?(name) do
+      :ets.delete(table_name(name))
     else
       _ ->
         {:error, :undefined_table}
     end
   end
 
-  def add(url, pool_name) do
-    with true <- table_exists?(pool_name) do
-      :ets.insert_new(table_name(pool_name), {url})
+  def add(url, name) do
+    with true <- table_exists?(name) do
+      :ets.insert_new(table_name(name), {url})
     else
       _ ->
         {:error, :undefined_table}
     end
   end
 
-  def exists?(url, pool_name) do
-    with true <- table_exists?(pool_name) do
-      case :ets.lookup(table_name(pool_name), url) do
+  def exists?(url, name) do
+    with true <- table_exists?(name) do
+      case :ets.lookup(table_name(name), url) do
         [] -> false
         _ -> true
       end
@@ -38,9 +38,9 @@ defmodule Spidey.Crawler.UrlStore do
     end
   end
 
-  def retrieve_all(pool_name) do
-    with true <- table_exists?(pool_name) do
-      pool_name
+  def retrieve_all(name) do
+    with true <- table_exists?(name) do
+      name
       |> table_name()
       |> :ets.match({:"$1"})
       |> List.flatten()
@@ -50,7 +50,7 @@ defmodule Spidey.Crawler.UrlStore do
     end
   end
 
-  defp table_name(pool_name), do: :"#{pool_name}_urls"
+  defp table_name(name), do: :"#{name}_urls"
 
-  defp table_exists?(pool_name), do: :undefined != :ets.info(table_name(pool_name))
+  defp table_exists?(name), do: :undefined != :ets.info(table_name(name))
 end

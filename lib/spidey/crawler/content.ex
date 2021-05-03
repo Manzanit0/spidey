@@ -8,6 +8,7 @@ defmodule Spidey.Crawler.Content do
 
   @behaviour Spidey.Crawler.ContentBehaviour
 
+  @spec scan(String.t()) :: list(String.t())
   def scan(url) when is_binary(url) do
     try do
       url

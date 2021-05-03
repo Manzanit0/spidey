@@ -1,29 +1,42 @@
 defmodule Spidey.Crawler.Queue do
   use Agent
 
-  def start_link(urls, pool_name) do
+  @spec start_link(list(), atom()) :: Agent.on_start()
+  def start_link(urls, name) do
     queue = :queue.from_list(urls)
-    Agent.start_link(fn -> queue end, name: queue_name(pool_name))
+    Agent.start_link(fn -> queue end, name: queue_name(name))
   end
 
-  def child_spec(pool_name, urls \\ []) do
+  @spec child_spec(atom(), list()) :: map()
+  def child_spec(name, urls \\ []) do
     %{
-      id: queue_name(pool_name),
-      start: {__MODULE__, :start_link, [urls, pool_name]}
+      id: queue_name(name),
+      start: {__MODULE__, :start_link, [urls, name]}
     }
   end
 
-  def pop(pool_name) do
-    Agent.get_and_update(queue_name(pool_name), &pop_value/1)
+  @spec pop(atom()) :: any()
+  def pop(name) do
+    Agent.get_and_update(queue_name(name), &pop_value/1)
   end
 
-  def take(n, pool_name) do
-    Agent.get_and_update(queue_name(pool_name), &pop_multiple(&1, n))
+  @spec take(integer(), atom()) :: list()
+  def take(n, name) do
+    Agent.get_and_update(queue_name(name), &pop_multiple(&1, n))
   end
 
-  def push(url, pool_name) do
-    Agent.update(queue_name(pool_name), &:queue.in(url, &1))
+  @spec push(any(), atom()) :: :ok
+  def push(url, name) do
+    Agent.update(queue_name(name), &:queue.in(url, &1))
   end
+
+  @spec length(atom()) :: integer()
+  def length(name) do
+    queue = Agent.get(queue_name(name), & &1)
+    :queue.len(queue)
+  end
+
+  ## Private.
 
   defp pop_value(queue) do
     case :queue.out(queue) do
@@ -43,10 +56,5 @@ defmodule Spidey.Crawler.Queue do
     end
   end
 
-  def length(pool_name) do
-    queue = Agent.get(queue_name(pool_name), & &1)
-    :queue.len(queue)
-  end
-
-  defp queue_name(pool_name), do: :"#{pool_name}Queue"
+  defp queue_name(name), do: :"#{name}Queue"
 end
