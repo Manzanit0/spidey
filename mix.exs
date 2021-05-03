@@ -2,7 +2,7 @@ defmodule Spidey.MixProject do
   use Mix.Project
 
   @name "Spidey"
-  @version "0.3.1"
+  @version "0.3.2"
   @repo_url "https://github.com/manzanit0/spidey"
 
   def project do
@@ -33,7 +33,7 @@ defmodule Spidey.MixProject do
 
   defp deps do
     [
-      {:httpoison, "~> 1.8.0"},
+      {:httpoison, "~> 1.7.0"},
       {:floki, "~> 0.27.0"},
       {:excoveralls, "~> 0.10", only: :test},
       {:mox, "~> 0.5", only: :test},
